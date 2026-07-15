@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { clientApiFetch } from "@/app/actions/api/client/clientApiFetch";
 import { QueueCard } from "@/app/components/QueueCard/QueueCard";
 import { IQueueEntryPublic } from "@/app/interface/queue_entry/queue_entry";
+import { QueueStatusBadge } from "@/app/components/QueueStatusBadge/QueueStatusBadge";
 
 const ACTIVE_STATUSES = "WAITING,STANDBY,INSIDE";
 const POLL_INTERVAL_MS = 5000;
@@ -46,7 +47,10 @@ export default function LiveQueuePage() {
 
   return (
     <main className="mx-auto flex min-h-[calc(100vh-57px)] w-full max-w-md flex-col gap-4 px-4 py-6">
-      <h1 className="text-3xl font-bold tracking-tight">Fila ao vivo</h1>
+      <div className="flex items-center flex-col gap 1 justify-between mx-auto">
+        <h1 className="text-3xl font-bold tracking-tight">Fila ao vivo</h1>
+        <QueueStatusBadge />
+      </div>
 
       {error && <p className="text-destructive">{error}</p>}
 

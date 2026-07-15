@@ -20,3 +20,8 @@ export interface ITruck {
 export interface IPaginatedTrucks extends IPagination {
   results: ITruck[];
 }
+
+export interface ITrucksWithJobPhoto extends ITruck {
+  job: "Carga" | "Descarga";
+  photo: File;
+}
