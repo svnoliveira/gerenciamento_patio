@@ -54,7 +54,7 @@ export function AreasPageClient({
         {panel.mode !== "closed" && (
           <AreaForm
             area={panel.mode === "edit" ? panel.area : null}
-            onDone={() => setPanel({ mode: "closed" })}
+            onDoneAction={() => setPanel({ mode: "closed" })}
           />
         )}
       </div>

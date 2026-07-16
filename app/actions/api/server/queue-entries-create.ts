@@ -25,7 +25,7 @@ export async function createQueueEntry(
   if (values.truck_bag) formData.append("truck_bag", String(values.truck_bag));
   if (values.truck_pallet)
     formData.append("truck_pallet", String(values.truck_pallet));
-  formData.append("photo", photo);
+  formData.append("photo", photo, photo.name);
 
   const res = await serverApiFetch("/queue-entries/", {
     method: "POST",

@@ -66,12 +66,8 @@ export const RegisterForm = () => {
   const items = useMemo(() => {
     return [
       { label: "Empresa", value: "COMPANY" },
-      ...(user?.is_superuser
-        ? [
-            { label: "Operador", value: "OPERATOR" },
-            { label: "Administrador", value: "ADMIN" },
-          ]
-        : []),
+      { label: "Administrador", value: "ADMIN" },
+      ...(user?.is_superuser ? [{ label: "Operador", value: "OPERATOR" }] : []),
     ];
   }, [user]);
 

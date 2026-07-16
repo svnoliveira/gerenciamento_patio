@@ -65,7 +65,7 @@ export function CompaniesPageClient({
         {panel.mode !== "closed" && (
           <CompanyForm
             company={panel.mode === "edit" ? panel.company : null}
-            onDone={() => setPanel({ mode: "closed" })}
+            onDoneAction={() => setPanel({ mode: "closed" })}
           />
         )}
       </div>

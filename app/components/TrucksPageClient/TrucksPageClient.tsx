@@ -81,7 +81,7 @@ export function TrucksPageClient({
             company_id={user?.company?.id}
             truck={panel.mode === "edit" ? panel.truck : null}
             companyOptions={companyOptions}
-            onDone={() => setPanel({ mode: "closed" })}
+            onDoneAction={() => setPanel({ mode: "closed" })}
           />
         )}
       </div>

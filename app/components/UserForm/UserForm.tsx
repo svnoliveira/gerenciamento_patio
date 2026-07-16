@@ -48,11 +48,11 @@ const ROLE_OPTIONS = [
 export function UserForm({
   user,
   companies,
-  onDone,
+  onDoneAction,
 }: {
   user: IUser | null;
   companies: ICompany[];
-  onDone: () => void;
+  onDoneAction: () => void;
 }) {
   const [isPending, startTransition] = useTransition();
 
@@ -83,12 +83,12 @@ export function UserForm({
       try {
         if (user) {
           await updateUser(user.id, values);
-          toast("Usuário atualizada com sucesso!");
+          toast("Usuário atualizado com sucesso!");
         } else {
           await createUser(values);
-          toast("Usuário criada com sucesso!");
+          toast("Usuário criado com sucesso!");
         }
-        onDone();
+        onDoneAction();
       } catch (error) {
         toast(
           error instanceof Error ? error.message : "Erro ao salvar usuário",
@@ -103,7 +103,7 @@ export function UserForm({
       try {
         await deleteUser(user.id);
         toast("Usuário excluída");
-        onDone();
+        onDoneAction();
       } catch (error) {
         toast(
           error instanceof Error ? error.message : "Erro ao excluir usuário",
@@ -118,7 +118,7 @@ export function UserForm({
       className="space-y-4 rounded-md border p-4"
     >
       <h2 className="text-lg font-semibold">
-        {user ? "Editar usuário" : "Nova usuário"}
+        {user ? "Editar usuário" : "Novo usuário"}
       </h2>
 
       <div className="space-y-2">
@@ -234,7 +234,7 @@ export function UserForm({
           <Button
             type="button"
             variant="outline"
-            onClick={onDone}
+            onClick={onDoneAction}
             disabled={isPending}
           >
             Cancelar

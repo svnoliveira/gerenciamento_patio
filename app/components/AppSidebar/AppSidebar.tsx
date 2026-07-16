@@ -11,6 +11,7 @@ import {
   MapPin,
   ListOrdered,
   Radio,
+  Upload,
 } from "lucide-react";
 import {
   Sidebar,
@@ -75,6 +76,12 @@ const NAV_ITEMS: {
     roles: ["ADMIN", "OPERATOR"],
   },
   { href: "/dashboard/areas", label: "Áreas", icon: MapPin, roles: ["ADMIN"] },
+  {
+    href: "/dashboard/integrations",
+    label: "Integração",
+    icon: Upload,
+    roles: ["ADMIN"],
+  },
 ];
 
 export function AppSidebar({ role }: { role: Role }) {

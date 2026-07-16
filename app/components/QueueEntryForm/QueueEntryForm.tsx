@@ -37,6 +37,7 @@ import { ITrucksWithJobPhoto } from "@/app/interface/truck/truck";
 import { PhotoInput } from "../PhotoInput/PhotoInput";
 import { EstimateDialog } from "./EstimateDialog";
 import { clientApiFetch } from "@/app/actions/api/client/clientApiFetch";
+import { compressImage } from "@/app/actions/api/client/compressImage";
 
 // TODO: replace
 const TYPE_OPTIONS = [
@@ -96,7 +97,11 @@ export function QueueEntryForm({
   async function submitEntry(values: QueueEntryFormOutput) {
     startTransition(async () => {
       try {
-        const entry = await createQueueEntry(values, values.photo);
+        const compressedPhoto = await compressImage(
+          values.photo,
+          values.truck_plate,
+        );
+        const entry = await createQueueEntry(values, compressedPhoto);
         toast("Agendamento registrado com sucesso!");
         form.reset();
         onSuccessAction?.();

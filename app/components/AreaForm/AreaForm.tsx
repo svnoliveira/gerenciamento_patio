@@ -33,10 +33,10 @@ type FormOutput = z.output<typeof schema>;
 
 export function AreaForm({
   area,
-  onDone,
+  onDoneAction,
 }: {
   area: IArea | null;
-  onDone: () => void;
+  onDoneAction: () => void;
 }) {
   const [isPending, startTransition] = useTransition();
 
@@ -53,12 +53,13 @@ export function AreaForm({
       try {
         if (area) {
           await updateArea(area.id, values);
+          form.reset();
           toast("Área atualizada com sucesso!");
         } else {
           await createArea(values);
           toast("Área criada com sucesso!");
         }
-        onDone();
+        onDoneAction();
       } catch (error) {
         toast(error instanceof Error ? error.message : "Erro ao salvar área");
       }
@@ -71,7 +72,7 @@ export function AreaForm({
       try {
         await deleteArea(area.id);
         toast("Área excluída");
-        onDone();
+        onDoneAction();
       } catch (error) {
         toast(error instanceof Error ? error.message : "Erro ao excluir área");
       }
@@ -115,7 +116,7 @@ export function AreaForm({
           <Button
             type="button"
             variant="outline"
-            onClick={onDone}
+            onClick={onDoneAction}
             disabled={isPending}
           >
             Cancelar

@@ -46,13 +46,13 @@ export function TruckForm({
   isUserAdmin,
   company_id,
   companyOptions,
-  onDone,
+  onDoneAction,
 }: {
   truck: ITruck | null;
   isUserAdmin: boolean;
   company_id?: number;
   companyOptions: { value: string; label: string }[];
-  onDone: () => void;
+  onDoneAction: () => void;
 }) {
   const [isPending, startTransition] = useTransition();
 
@@ -80,9 +80,10 @@ export function TruckForm({
           toast("Caminhão atualizado com sucesso!");
         } else {
           await createTruck(values);
+          form.reset();
           toast("Caminhão criado com sucesso!");
         }
-        onDone();
+        onDoneAction();
       } catch (error) {
         toast(
           error instanceof Error ? error.message : "Erro ao salvar caminhão",
@@ -97,7 +98,7 @@ export function TruckForm({
       try {
         await deleteTruck(truck.id);
         toast("Caminhão excluído");
-        onDone();
+        onDoneAction();
       } catch (error) {
         toast(
           error instanceof Error ? error.message : "Erro ao excluir caminhão",
@@ -285,7 +286,7 @@ export function TruckForm({
           <Button
             type="button"
             variant="outline"
-            onClick={onDone}
+            onClick={onDoneAction}
             disabled={isPending}
           >
             Cancelar

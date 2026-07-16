@@ -97,7 +97,7 @@ export function UsersPageClient({
           <UserForm
             user={panel.mode === "edit" ? panel.user : null}
             companies={companiesData?.results || []}
-            onDone={() => setPanel({ mode: "closed" })}
+            onDoneAction={() => setPanel({ mode: "closed" })}
           />
         )}
       </div>

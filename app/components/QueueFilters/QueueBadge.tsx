@@ -18,6 +18,7 @@ import {
   PopoverTrigger,
 } from "@/app/components/ui/popover";
 import { TQueueFilterField } from "@/app/interface/queue_entry/queue_entry";
+import { formatDateForBadge } from "@/lib/formatDate";
 
 interface FilterBadgeProps {
   field: TQueueFilterField;
@@ -53,9 +54,11 @@ export function FilterBadge({
       return field.options.find((o) => o.value === value)?.label ?? value;
     }
     if (field.type === "dateRange") {
-      if (valueAfter && valueBefore) return `${valueAfter} → ${valueBefore}`;
-      if (valueAfter) return `Após ${valueAfter}`;
-      if (valueBefore) return `Até ${valueBefore}`;
+      const after = valueAfter ? formatDateForBadge(valueAfter) : "";
+      const before = valueBefore ? formatDateForBadge(valueBefore) : "";
+      if (after && before) return `${after} → ${before}`;
+      if (after) return `Após ${after}`;
+      if (before) return `Até ${before}`;
     }
     return value;
   }

@@ -39,6 +39,7 @@ export const LoginForm = () => {
     try {
       const success = await login(data);
       if (success) {
+        form.reset();
         router.push("/dashboard");
       }
     } catch (error) {

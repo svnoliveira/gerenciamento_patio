@@ -33,10 +33,10 @@ type FormOutput = z.output<typeof schema>;
 
 export function CompanyForm({
   company,
-  onDone,
+  onDoneAction,
 }: {
   company: ICompany | null;
-  onDone: () => void;
+  onDoneAction: () => void;
 }) {
   const [isPending, startTransition] = useTransition();
 
@@ -55,9 +55,10 @@ export function CompanyForm({
           toast("Empresa atualizada com sucesso!");
         } else {
           await createCompany(values);
+          form.reset();
           toast("Empresa criada com sucesso!");
         }
-        onDone();
+        onDoneAction();
       } catch (error) {
         toast(
           error instanceof Error ? error.message : "Erro ao salvar empresa",
@@ -72,7 +73,7 @@ export function CompanyForm({
       try {
         await deleteCompany(company.id);
         toast("Empresa excluída");
-        onDone();
+        onDoneAction();
       } catch (error) {
         toast(
           error instanceof Error ? error.message : "Erro ao excluir empresa",
@@ -108,7 +109,7 @@ export function CompanyForm({
           <Button
             type="button"
             variant="outline"
-            onClick={onDone}
+            onClick={onDoneAction}
             disabled={isPending}
           >
             Cancelar
