@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   reactCompiler: true,
   cacheComponents: true,
   cacheLife: {
@@ -17,7 +18,21 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "pub-1aa60336a99943a2b9b32c661a00c884.r2.dev",
       },
+      {
+        protocol: "https",
+        hostname: "images.lrnagricola.com.br",
+      },
+      { hostname: "api.lrnagricola.com,br" },
     ],
+  },
+
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: "https://api.lrnagricola.com.br/:path*",
+      },
+    ];
   },
 };
 
