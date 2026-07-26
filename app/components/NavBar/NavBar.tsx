@@ -12,7 +12,7 @@ export function Navbar() {
     <header className="flex items-center justify-between border-b bg-background px-4 py-3">
       <Link href="/" className="flex items-center gap-2">
         <Image src="/logo.png" alt="Grupo LRN" width={36} height={36} />
-        <span className="text-lg font-bold">LRN</span>
+        <span className="hidden sm:block text-lg font-bold">LRN</span>
       </Link>
 
       <nav className="flex items-center gap-2">
