@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Grupo LNR",
+  title: "Grupo LRN",
   description: "Gerenciamento de pátio e agendamento de caminhões",
   icons: {
     icon: [

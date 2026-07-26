@@ -100,8 +100,8 @@ export function AppSidebar({ role }: { role: Role }) {
     <Sidebar>
       <SidebarHeader className="px-2 py-3">
         <Link href="/" className="flex items-center gap-2 px-2">
-          <Image src="/logo.png" alt="LNR Agrícola" width={28} height={28} />
-          <span className="text-sm font-semibold">Grupo LNR</span>
+          <Image src="/logo.png" alt="LRN Agrícola" width={28} height={28} />
+          <span className="text-sm font-semibold">Grupo LRN</span>
         </Link>
       </SidebarHeader>
       <SidebarContent>

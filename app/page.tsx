@@ -11,12 +11,12 @@ export default function HomePage() {
         <div className="flex flex-col items-center gap-3 text-center">
           <Image
             src="/logo.png"
-            alt="LNR Agrícola"
+            alt="LRN Agrícola"
             width={196}
             height={196}
             priority
           />
-          <h1 className="text-3xl font-bold tracking-tight">Grupo LNR</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Grupo LRN</h1>
         </div>
 
         <div className="flex w-full max-w-sm flex-col gap-4">
