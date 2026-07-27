@@ -31,9 +31,6 @@ export function TrucksTable({
             <TableHead>Telefone</TableHead>
             <TableHead>Empresa</TableHead>
             <TableHead>Produto</TableHead>
-            <TableHead>Granel</TableHead>
-            <TableHead>Bag</TableHead>
-            <TableHead>Pallet</TableHead>
             <TableHead>Tipo</TableHead>
           </TableRow>
         </TableHeader>

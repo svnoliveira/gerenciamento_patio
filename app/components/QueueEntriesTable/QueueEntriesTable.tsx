@@ -31,9 +31,6 @@ export function QueueEntriesTable({
             <TableHead>Empresa</TableHead>
             <TableHead>Motorista</TableHead>
             <TableHead>Produto</TableHead>
-            <TableHead>Granel</TableHead>
-            <TableHead>Bag</TableHead>
-            <TableHead>Pallet</TableHead>
             <TableHead>Área</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Operação</TableHead>

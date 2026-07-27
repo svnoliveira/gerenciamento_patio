@@ -7,11 +7,6 @@ import {
   Package,
   Truck as TruckIcon,
   ArrowLeftRight,
-  Weight,
-  ShoppingBag,
-  Boxes,
-  Clock,
-  Timer,
 } from "lucide-react";
 import { Badge } from "@/app/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/app/components/ui/card";
