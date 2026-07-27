@@ -36,9 +36,9 @@ import { formatCellphone, formatCPF, formatPlate } from "@/lib/formatNumbers";
 
 // TODO: replace with your real Truck.Type TextChoices values
 const TYPE_OPTIONS = [
-  { value: "GRANEL", label: "Granel" },
-  { value: "BAG", label: "Bag" },
-  { value: "PALLET", label: "Pallet" },
+  { value: "Granel", label: "Granel" },
+  { value: "Bag", label: "Bag" },
+  { value: "Pallet", label: "Pallet" },
 ];
 
 export function TruckForm({
@@ -66,9 +66,6 @@ export function TruckForm({
       product: truck?.product ?? "",
       type: truck?.type ?? "",
       company: truck?.company?.id ?? undefined,
-      granel: truck?.granel ? Number(truck.granel) : undefined,
-      bag: truck?.bag ? Number(truck.bag) : undefined,
-      pallet: truck?.pallet ? Number(truck.pallet) : undefined,
     },
   });
 
@@ -260,21 +257,6 @@ export function TruckForm({
               {form.formState.errors.company.message}
             </p>
           )}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-3 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="granel">Granel</Label>
-          <Input id="granel" type="number" {...form.register("granel")} />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="bag">Bag</Label>
-          <Input id="bag" type="number" {...form.register("bag")} />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="pallet">Pallet</Label>
-          <Input id="pallet" type="number" {...form.register("pallet")} />
         </div>
       </div>
 

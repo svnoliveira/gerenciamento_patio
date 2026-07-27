@@ -98,9 +98,6 @@ export function QueueEntryDetailCard({
                 label="Operação"
                 value={JOB_LABELS[entry.job] ?? entry.job}
               />
-              <Field icon={Weight} label="Granel" value={entry.truck_granel} />
-              <Field icon={ShoppingBag} label="Bag" value={entry.truck_bag} />
-              <Field icon={Boxes} label="Pallet" value={entry.truck_pallet} />
             </div>
 
             <Separator />

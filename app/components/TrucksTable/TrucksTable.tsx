@@ -63,9 +63,6 @@ export function TrucksTable({
                 <TableCell>{truck.cellphone}</TableCell>
                 <TableCell>{truck.company?.name ?? "—"}</TableCell>
                 <TableCell>{truck.product}</TableCell>
-                <TableCell>{truck.granel ?? "—"}</TableCell>
-                <TableCell>{truck.bag ?? "—"}</TableCell>
-                <TableCell>{truck.pallet ?? "—"}</TableCell>
                 <TableCell>{truck.type}</TableCell>
               </TableRow>
             ))

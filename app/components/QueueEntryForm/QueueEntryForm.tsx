@@ -41,9 +41,9 @@ import { compressImage } from "@/app/actions/api/client/compressImage";
 
 // TODO: replace
 const TYPE_OPTIONS = [
-  { value: "GRANEL", label: "Granel" },
-  { value: "BAG", label: "Bag" },
-  { value: "PALLET", label: "Pallet" },
+  { value: "Granel", label: "Granel" },
+  { value: "Bag", label: "Bag" },
+  { value: "Pallet", label: "Pallet" },
 ];
 
 const JOB_OPTIONS = [
@@ -273,30 +273,6 @@ export function QueueEntryForm({
             </SelectContent>
           </Select>
         </Field>
-
-        <div className="grid grid-cols-3 gap-3">
-          <Field label="Granel">
-            <Input
-              className="h-14 text-lg"
-              type="number"
-              {...form.register("truck_granel")}
-            />
-          </Field>
-          <Field label="Bag">
-            <Input
-              className="h-14 text-lg"
-              type="number"
-              {...form.register("truck_bag")}
-            />
-          </Field>
-          <Field label="Pallet">
-            <Input
-              className="h-14 text-lg"
-              type="number"
-              {...form.register("truck_pallet")}
-            />
-          </Field>
-        </div>
 
         <Field
           label="Foto do caminhão"

@@ -14,9 +14,6 @@ export const truckSchema = z.object({
   product: z.string().min(1, "Produto é obrigatório"),
   type: z.string().min(1, "Tipo é obrigatório"),
   company: z.coerce.number().int().positive("Selecione uma empresa"),
-  granel: z.coerce.number().optional(),
-  bag: z.coerce.number().optional(),
-  pallet: z.coerce.number().optional(),
 });
 
 export type TruckFormInput = z.input<typeof truckSchema>;

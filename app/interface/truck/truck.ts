@@ -6,9 +6,6 @@ export interface ITruck {
   company: Pick<ICompany, "id" | "name"> | null;
   plate: string;
   product: string;
-  granel?: string | null;
-  bag?: string | null;
-  pallet?: string | null;
   driver: string;
   cpf: string;
   cellphone: string;
@@ -25,3 +22,6 @@ export interface ITrucksWithJobPhoto extends ITruck {
   job: "Carga" | "Descarga";
   photo: File;
 }
+
+export type TTypeTruck = "Granel" | "Bag" | "Pallet";
+export const typeOptions = ["Granel", "Bag", "Pallet"];

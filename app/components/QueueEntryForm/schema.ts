@@ -19,9 +19,6 @@ export const queueEntrySchema = z.object({
   truck_product: z.string().min(1, "Produto é obrigatório"),
   truck_type: z.string().min(1, "Tipo é obrigatório"),
   job: z.enum(["Carga", "Descarga"], { message: "Selecione uma operação" }),
-  truck_granel: z.coerce.number().optional(),
-  truck_bag: z.coerce.number().optional(),
-  truck_pallet: z.coerce.number().optional(),
   photo: z
     .instanceof(File, { message: "Foto é obrigatória" })
     .refine((file) => file.size > 0, "Foto é obrigatória"),

@@ -38,9 +38,6 @@ export interface IQueueEntry {
   company_name: string | null;
   truck_plate: string;
   truck_product: string;
-  truck_granel: string | null;
-  truck_bag: string | null;
-  truck_pallet: string | null;
   truck_driver: string;
   truck_cpf: string;
   truck_cellphone: string;

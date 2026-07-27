@@ -70,9 +70,6 @@ export function QueueEntriesTable({
                 <TableCell>{entry.company_name ?? "—"}</TableCell>
                 <TableCell>{entry.truck_driver}</TableCell>
                 <TableCell>{entry.truck_product}</TableCell>
-                <TableCell>{entry.truck_granel ?? "—"}</TableCell>
-                <TableCell>{entry.truck_bag ?? "—"}</TableCell>
-                <TableCell>{entry.truck_pallet ?? "—"}</TableCell>
                 <TableCell>{entry.area?.name ?? "—"}</TableCell>
                 <TableCell>
                   <Badge

@@ -20,11 +20,6 @@ export async function createQueueEntry(
   formData.append("truck_product", values.truck_product);
   formData.append("truck_type", values.truck_type);
   formData.append("job", values.job);
-  if (values.truck_granel)
-    formData.append("truck_granel", String(values.truck_granel));
-  if (values.truck_bag) formData.append("truck_bag", String(values.truck_bag));
-  if (values.truck_pallet)
-    formData.append("truck_pallet", String(values.truck_pallet));
   formData.append("photo", photo, photo.name);
 
   const res = await serverApiFetch("/queue-entries/", {
