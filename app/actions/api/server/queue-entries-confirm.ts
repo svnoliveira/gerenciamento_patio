@@ -1,11 +1,11 @@
 "use server";
 
 import { confirmQueueEntryDetails, moveToYard } from "./queue-entries";
-import { QueueEntryCompleteFormOutput } from "@/app/components/QueueEntryConfirmForm/schema";
+import { QueueEntryCompleteFormValues } from "@/app/components/QueueEntryConfirmForm/schema";
 
 export async function completeScheduledEntry(
   id: number,
-  values: QueueEntryCompleteFormOutput,
+  values: QueueEntryCompleteFormValues,
   needsArea: boolean,
 ) {
   await confirmQueueEntryDetails(id, {

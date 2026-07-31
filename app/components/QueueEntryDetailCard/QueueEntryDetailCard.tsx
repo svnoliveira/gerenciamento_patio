@@ -6,6 +6,7 @@ import {
   Phone,
   Package,
   Truck as TruckIcon,
+  Boxes,
   ArrowLeftRight,
 } from "lucide-react";
 import { Badge } from "@/app/components/ui/badge";
@@ -89,9 +90,14 @@ export function QueueEntryDetailCard({
                 value={entry.truck_type}
               />
               <Field
+                icon={Boxes}
+                label="Tipo de carga"
+                value={entry.truck_cargo_type}
+              />
+              <Field
                 icon={ArrowLeftRight}
                 label="Operação"
-                value={JOB_LABELS[entry.job] ?? entry.job}
+                value={entry.job ? JOB_LABELS[entry.job] : null}
               />
             </div>
 
@@ -99,11 +105,15 @@ export function QueueEntryDetailCard({
 
             <div className="space-y-3 rounded-xl bg-muted/40 p-4">
               <TimeRow label="Criado em" value={formatDate(entry.created_at)} />
+              <TimeRow label="Chegada" value={formatDate(entry.arrival_time)} />
               <TimeRow
-                label="Em espera desde"
-                value={formatDate(entry.on_standby_time)}
+                label="Início operação"
+                value={formatDate(entry.start_time)}
               />
-              <TimeRow label="Início" value={formatDate(entry.start_time)} />
+              <TimeRow
+                label="Aguardando NF"
+                value={formatDate(entry.awaiting_conclusion_time)}
+              />
               <TimeRow label="Fim" value={formatDate(entry.end_time)} />
               <TimeRow
                 label="Última atualização"
@@ -113,12 +123,26 @@ export function QueueEntryDetailCard({
 
             <div className="space-y-3 rounded-xl border-2 border-primary/20 bg-primary/5 p-4">
               <TimeRow
-                label="Tempo em trânsito"
-                value={formatDuration(entry.start_time, entry.end_time)}
+                label="Tempo até chegada"
+                value={formatDuration(entry.created_at, entry.arrival_time)}
               />
               <TimeRow
                 label="Tempo em espera"
-                value={formatDuration(entry.created_at, entry.start_time)}
+                value={formatDuration(entry.arrival_time, entry.start_time)}
+              />
+              <TimeRow
+                label="Tempo em operação"
+                value={formatDuration(
+                  entry.start_time,
+                  entry.awaiting_conclusion_time,
+                )}
+              />
+              <TimeRow
+                label="Tempo aguardando NF"
+                value={formatDuration(
+                  entry.awaiting_conclusion_time,
+                  entry.end_time,
+                )}
               />
               <TimeRow
                 label="Tempo total"
@@ -131,7 +155,7 @@ export function QueueEntryDetailCard({
         )}
 
         {entry.photo && (
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border shadow-sm">
+          <div className="relative aspect-4/3 w-full overflow-hidden rounded-xl border shadow-sm">
             <Image
               src={entry.photo}
               alt={`Foto do caminhão ${entry.truck_plate}`}
