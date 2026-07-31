@@ -14,19 +14,19 @@ import { Label } from "@/app/components/ui/label";
 
 export function SetPositionDialog({
   open,
-  onOpenChange,
+  onOpenChangeAction,
   maxPosition,
-  onConfirm,
+  onConfirmAction,
 }: {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onOpenChangeAction: (open: boolean) => void;
   maxPosition: number;
-  onConfirm: (position: number) => void;
+  onConfirmAction: (position: number) => void | Promise<void>;
 }) {
   const [position, setPosition] = useState(1);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChangeAction}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Escolha a posição na fila</DialogTitle>
@@ -45,13 +45,13 @@ export function SetPositionDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={() => onOpenChangeAction(false)}>
             Cancelar
           </Button>
           <Button
             onClick={() => {
-              onConfirm(position);
-              onOpenChange(false);
+              onConfirmAction(position);
+              onOpenChangeAction(false);
             }}
           >
             Confirmar

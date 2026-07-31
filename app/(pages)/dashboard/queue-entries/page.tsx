@@ -34,7 +34,7 @@ export default async function QueueEntriesPage({
   const data: IPaginatedQueueEntries = await res.json();
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 min-w-0">
       <h1 className="text-2xl font-semibold tracking-tight">
         Históricos de agendamento
       </h1>

@@ -1,20 +1,25 @@
 import { z } from "zod";
 
-const plateRegex = /^[A-Z]{3}\d[A-Z]\d{2}$/;
-
-export const QueueEntryConfirmSchema = z.object({
-  truck_plate: z
-    .string()
-    .regex(plateRegex, "Placa inválida. Use o formato ABC1D23"),
+export const queueEntryCompleteBaseSchema = z.object({
   job: z.enum(["Carga", "Descarga"], { message: "Selecione uma operação" }),
+  area: z.number().optional(),
   photo: z
     .instanceof(File, { message: "Foto é obrigatória" })
     .refine((file) => file.size > 0, "Foto é obrigatória"),
 });
 
-export type QueueEntryConfirmFormInput = z.input<
-  typeof QueueEntryConfirmSchema
->;
-export type QueueEntryConfirmFormOutput = z.output<
-  typeof QueueEntryConfirmSchema
+export function buildQueueEntryCompleteSchema(needsArea: boolean) {
+  return queueEntryCompleteBaseSchema.superRefine((data, ctx) => {
+    if (needsArea && !data.area) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Selecione uma área",
+        path: ["area"],
+      });
+    }
+  });
+}
+
+export type QueueEntryCompleteFormValues = z.infer<
+  typeof queueEntryCompleteBaseSchema
 >;

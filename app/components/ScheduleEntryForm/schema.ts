@@ -4,7 +4,7 @@ const plateRegex = /^([A-Z]{3}\d{4}|[A-Z]{3}\d[A-Z]\d{2})$/;
 const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
 const cellphoneRegex = /^\(\d{2}\) \d \d{4}-\d{4}$/;
 
-export const queueEntryWalkUpSchema = z.object({
+export const scheduleEntrySchema = z.object({
   company_name: z.string().min(1, "Nome da empresa é obrigatório"),
   truck_plate: z
     .string()
@@ -21,14 +21,8 @@ export const queueEntryWalkUpSchema = z.object({
   truck_cargo_type: z.enum(["Granel", "Bag", "Pallet"], {
     message: "Selecione o tipo de carga",
   }),
-  job: z.enum(["Carga", "Descarga"], { message: "Selecione uma operação" }),
-  area: z.number({ message: "Selecione uma área" }),
-  photo: z
-    .instanceof(File, { message: "Foto é obrigatória" })
-    .refine((file) => file.size > 0, "Foto é obrigatória"),
+  area: z.number().optional(),
 });
 
-export type QueueEntryWalkUpFormInput = z.input<typeof queueEntryWalkUpSchema>;
-export type QueueEntryWalkUpFormOutput = z.output<
-  typeof queueEntryWalkUpSchema
->;
+export type ScheduleEntryFormInput = z.input<typeof scheduleEntrySchema>;
+export type ScheduleEntryFormOutput = z.output<typeof scheduleEntrySchema>;

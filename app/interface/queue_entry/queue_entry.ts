@@ -1,19 +1,27 @@
 import { IPagination } from "../admin/global";
 import { IArea } from "../area/area";
+import { TTruckCargoType } from "../truck/truck";
 
 export type TQueueEntryJob = "Carga" | "Descarga";
+export type TQueueListFilter =
+  | "ALL"
+  | "SCHEDULED"
+  | "ON_YARD"
+  | "AWAITING_CONCLUSION";
 
 export type TQueueEntryStatus =
-  | "WAITING"
-  | "STANDBY"
-  | "INSIDE"
+  | "SCHEDULED"
+  | "ON_YARD"
+  | "IN_OPERATION"
+  | "AWAITING_CONCLUSION"
   | "FINISHED"
   | "CANCELLED";
 
 export const STATUS_LABELS: Record<string, string> = {
-  WAITING: "Aguardando",
-  STANDBY: "Em espera",
-  INSIDE: "No pátio",
+  SCHEDULED: "Agendado",
+  ON_YARD: "No pátio",
+  IN_OPERATION: "Em operação",
+  AWAITING_CONCLUSION: "Aguardando NF",
   FINISHED: "Finalizado",
   CANCELLED: "Cancelado",
 };
@@ -27,10 +35,11 @@ export interface IQueueEntry {
   id: number;
   area: IArea | null;
   status: TQueueEntryStatus;
-  job: TQueueEntryJob;
-  on_standby_time: null | string;
-  start_time: null | string;
-  end_time: null | string;
+  job: TQueueEntryJob | null;
+  arrival_time: string | null;
+  start_time: string | null;
+  awaiting_conclusion_time: string | null;
+  end_time: string | null;
   created_at: string;
   updated_at: string;
   queue_order: number | null;
@@ -42,6 +51,7 @@ export interface IQueueEntry {
   truck_cpf: string;
   truck_cellphone: string;
   truck_type: string;
+  truck_cargo_type: TTruckCargoType;
 }
 
 export interface IQueueEntryPublic {
@@ -55,6 +65,12 @@ export interface IQueueEntryPublic {
 
 export interface IPaginatedQueueEntries extends IPagination {
   results: IQueueEntry[];
+}
+
+export interface IQueueEntryEstimate {
+  message: string;
+  estimated_minutes: number | null;
+  is_reliable?: boolean;
 }
 
 export type TQueueFilterField =

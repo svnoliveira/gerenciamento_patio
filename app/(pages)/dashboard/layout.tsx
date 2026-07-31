@@ -29,13 +29,13 @@ export default async function DashboardLayout({
     <SidebarProvider>
       <AppSidebar role={user.role} />
 
-      <SidebarInset>
+      <SidebarInset className="min-w-0">
         <header className="relative z-10 flex h-14 shrink-0 items-center gap-2 border-b bg-background/80 px-4 backdrop-blur-sm">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="h-4" />
         </header>
         <main
-          className="relative flex-1 bg-center bg-no-repeat bg-contain p-6"
+          className="relative min-w-0 overflow-hidden flex-1 bg-center bg-no-repeat bg-contain p-6"
           style={{
             backgroundImage: "url(/fadedlogo.png)",
             backgroundSize: "40%",

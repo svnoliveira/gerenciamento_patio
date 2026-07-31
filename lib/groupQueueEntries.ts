@@ -1,20 +1,13 @@
 import { IQueueEntry } from "@/app/interface/queue_entry/queue_entry";
 
-export function groupQueueEntries(entries: IQueueEntry[]) {
-  const waiting = entries.filter(
-    (e) => (e.status === "WAITING" || e.status === "STANDBY") && !e.area,
-  );
+export interface IBoardGroups {
+  queueEntries: IQueueEntry[]; // SCHEDULED + ON_YARD + AWAITING_CONCLUSION
+  areaEntries: IQueueEntry[]; // IN_OPERATION
+}
 
-  const byArea = new Map<number, IQueueEntry[]>();
-  entries.forEach((e) => {
-    const insideThisArea =
-      e.area && (e.status === "INSIDE" || e.status === "STANDBY");
-    if (insideThisArea) {
-      const list = byArea.get(e.area!.id) ?? [];
-      list.push(e);
-      byArea.set(e.area!.id, list);
-    }
-  });
-
-  return { waiting, byArea };
+export function groupBoardEntries(entries: IQueueEntry[]): IBoardGroups {
+  return {
+    queueEntries: entries.filter((e) => e.status !== "IN_OPERATION"),
+    areaEntries: entries.filter((e) => e.status === "IN_OPERATION"),
+  };
 }

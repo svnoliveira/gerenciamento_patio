@@ -21,17 +21,21 @@ export function formatCPF(raw: string): string {
 export function formatPlate(value: string): string {
   const clean = value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
 
-  const pattern = ["L", "L", "L", "N", "L", "N", "N"];
-
   let result = "";
-  for (let i = 0; i < clean.length && i < pattern.length; i++) {
+  for (let i = 0; i < clean.length && i < 7; i++) {
     const char = clean[i];
-    const expectsLetter = pattern[i] === "L";
     const isLetter = /[A-Z]/.test(char);
     const isDigit = /[0-9]/.test(char);
 
-    if (expectsLetter && isLetter) result += char;
-    else if (!expectsLetter && isDigit) result += char;
+    if (i < 3) {
+      if (isLetter) result += char;
+    } else if (i === 3) {
+      if (isDigit) result += char;
+    } else if (i === 4) {
+      if (isLetter || isDigit) result += char;
+    } else {
+      if (isDigit) result += char;
+    }
   }
 
   return result;

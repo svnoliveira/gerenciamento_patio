@@ -1,234 +1,120 @@
 "use client";
 
-import { useForm, Controller, useWatch } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMemo, useState, useTransition } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/app/components/ui/select";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/app/components/ui/alert-dialog";
 import { formatPlate } from "@/lib/formatNumbers";
-import { checkDuplicatePlate } from "@/lib/checkDuplicatePlate";
-import {
-  QueueEntryConfirmSchema,
-  QueueEntryConfirmFormInput,
-  QueueEntryConfirmFormOutput,
-} from "./schema";
-import { ITruck } from "@/app/interface/truck/truck";
-import { findTrucksByPlate } from "@/lib/findTruckByPlate";
-import { QueueEntryForm } from "../QueueEntryForm/QueueEntryForm";
-import { PhotoInput } from "../PhotoInput/PhotoInput";
+import { findScheduledEntriesByPlate } from "@/app/actions/api/client/findScheduledEntriesByPlate";
+import { ScheduledEntryPickCard } from "../ScheduledEntryPickCard/ScheduledEntryPickCard";
+import { QueueEntryConfirmCompleteForm } from "./QueueEntryConfirmCompleteForm";
+import { IQueueEntry } from "@/app/interface/queue_entry/queue_entry";
 
-const JOB_OPTIONS = [
-  { value: "Carga", label: "Carga" },
-  { value: "Descarga", label: "Descarga" },
-];
+type TStage =
+  | { step: "lookup" }
+  | { step: "pick"; entries: IQueueEntry[] }
+  | { step: "complete"; entry: IQueueEntry };
 
 export function QueueEntryConfirmForm() {
-  const [isPending, startTransition] = useTransition();
-  const [duplicateOpen, setDuplicateOpen] = useState(false);
-  const [pendingValues, setPendingValues] =
-    useState<QueueEntryConfirmFormOutput | null>(null);
-  const [selectedTruck, setSelectedTruck] = useState<ITruck | null>();
+  const searchParams = useSearchParams();
+  const initialPlate = searchParams.get("plate") ?? "";
 
-  const form = useForm<
-    QueueEntryConfirmFormInput,
-    unknown,
-    QueueEntryConfirmFormOutput
-  >({
-    resolver: zodResolver(QueueEntryConfirmSchema),
-    defaultValues: {
-      truck_plate: "",
-      job: "" as never,
-      photo: undefined,
-    },
-  });
+  const [stage, setStage] = useState<TStage>({ step: "lookup" });
+  const [plateInput, setPlateInput] = useState(initialPlate);
+  const [isSearching, setIsSearching] = useState(false);
 
-  async function submitEntry(values: QueueEntryConfirmFormOutput) {
-    startTransition(async () => {
-      try {
-        const trucks = await findTrucksByPlate(values.truck_plate);
-        if (trucks.length < 1) {
-          throw new Error("Nenhum caminhão cadastrado com esta placa.");
-        }
-        toast("Placa encontrada!");
-        setSelectedTruck(trucks[0]);
-        //TODO: if there are more than 1 trucks, show a warning
-      } catch (error) {
-        toast(
-          error instanceof Error
-            ? error.message
-            : "Erro ao registrar agendamento",
-        );
+  async function runLookup(plate: string) {
+    setIsSearching(true);
+    try {
+      const entries = await findScheduledEntriesByPlate(plate);
+      if (entries.length === 0) {
+        toast("Nenhum agendamento encontrado para esta placa.");
+        return;
       }
-    });
+      if (entries.length === 1) {
+        setStage({ step: "complete", entry: entries[0] });
+      } else {
+        setStage({ step: "pick", entries });
+      }
+    } catch (error) {
+      toast(
+        error instanceof Error ? error.message : "Erro ao buscar agendamento",
+      );
+    } finally {
+      setIsSearching(false);
+    }
   }
 
-  async function onSubmit(values: QueueEntryConfirmFormOutput) {
-    const isDuplicate = await checkDuplicatePlate(values.truck_plate);
-    if (isDuplicate) {
-      setPendingValues(values);
-      setDuplicateOpen(true);
-      return;
-    }
-    submitEntry(values);
-  }
+  useEffect(() => {
+    const load = async () => {
+      if (initialPlate && initialPlate.length === 7) {
+        await runLookup(initialPlate);
+      }
+    };
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only auto-run once on mount, using whatever plate was in the URL at that time
+  }, []);
 
-  const jobValue = useWatch({ control: form.control, name: "job" });
-  const photoValue = useWatch({ control: form.control, name: "photo" });
+  if (stage.step === "lookup") {
+    return (
+      <div className="mx-auto flex w-full max-w-md flex-col gap-5">
+        <h1 className="text-3xl font-bold tracking-tight">
+          Confirmar agendamento
+        </h1>
 
-  const preRegisteredTruck = useMemo(() => {
-    if (selectedTruck && jobValue && photoValue) {
-      return { ...selectedTruck, job: jobValue, photo: photoValue };
-    }
-    return null;
-  }, [jobValue, photoValue, selectedTruck]);
+        <div className="space-y-1.5">
+          <Label className="text-base">Placa</Label>
+          <Input
+            className="h-14 text-lg"
+            placeholder="ABC1D23"
+            value={plateInput}
+            onChange={(e) => setPlateInput(formatPlate(e.target.value))}
+            maxLength={7}
+          />
+        </div>
 
-  return (
-    <>
-      {!preRegisteredTruck ? (
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="mx-auto flex w-full max-w-md flex-col gap-5"
+        <Button
+          size="lg"
+          className="h-16 text-xl font-semibold"
+          disabled={isSearching || plateInput.length < 7}
+          onClick={() => runLookup(plateInput)}
         >
-          <h1 className="text-3xl font-bold tracking-tight">
-            Confirmar agendamento
-          </h1>
+          {isSearching ? "Buscando..." : "Buscar Placa"}
+        </Button>
+      </div>
+    );
+  }
 
-          <Field
-            label="Placa"
-            error={form.formState.errors.truck_plate?.message}
-          >
-            <Controller
-              name="truck_plate"
-              control={form.control}
-              render={({ field }) => (
-                <Input
-                  className="h-14 text-lg"
-                  placeholder="ABC1D23"
-                  value={field.value ?? ""}
-                  onChange={(e) => field.onChange(formatPlate(e.target.value))}
-                  maxLength={7}
-                />
-              )}
-            />
-          </Field>
+  if (stage.step === "pick") {
+    return (
+      <div className="mx-auto flex w-full max-w-md flex-col gap-4">
+        <h1 className="text-2xl font-bold tracking-tight">
+          Selecione o agendamento
+        </h1>
+        <p className="text-muted-foreground">
+          Encontramos {stage.entries.length} agendamentos para a placa{" "}
+          {plateInput}.
+        </p>
+        {stage.entries.map((entry) => (
+          <ScheduledEntryPickCard
+            key={entry.id}
+            entry={entry}
+            onSelectAction={() => setStage({ step: "complete", entry })}
+          />
+        ))}
+        <Button variant="outline" onClick={() => setStage({ step: "lookup" })}>
+          Voltar
+        </Button>
+      </div>
+    );
+  }
 
-          <Field label="Operação" error={form.formState.errors.job?.message}>
-            <Select
-              value={jobValue}
-              onValueChange={(v) =>
-                form.setValue("job", v as "Carga" | "Descarga", {
-                  shouldValidate: true,
-                })
-              }
-            >
-              <SelectTrigger className="h-14 w-full text-lg">
-                <SelectValue placeholder="Selecione">
-                  {JOB_OPTIONS.find((o) => o.value === jobValue)?.label}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                {JOB_OPTIONS.map((o) => (
-                  <SelectItem key={o.value} value={o.value}>
-                    {o.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
-
-          <Field
-            label="Foto do caminhão"
-            error={form.formState.errors.photo?.message}
-          >
-            <Controller
-              name="photo"
-              control={form.control}
-              render={({ field: { value, onChange } }) => (
-                <PhotoInput value={value} onChangeAction={onChange} />
-              )}
-            />
-          </Field>
-
-          <Button
-            type="submit"
-            size="lg"
-            className="h-16 text-xl font-semibold"
-            disabled={isPending}
-          >
-            {isPending ? "Enviando..." : "Procurar Placa"}
-          </Button>
-        </form>
-      ) : (
-        <QueueEntryForm
-          data={preRegisteredTruck}
-          onSuccessAction={() => {
-            form.reset();
-            setSelectedTruck(null);
-          }}
-        />
-      )}
-
-      <AlertDialog open={duplicateOpen} onOpenChange={setDuplicateOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Placa já está na fila</AlertDialogTitle>
-            <AlertDialogDescription>
-              Já existe um agendamento ativo com esta placa. Deseja continuar
-              mesmo assim?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setPendingValues(null)}>
-              Voltar
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => {
-                if (pendingValues) submitEntry(pendingValues);
-                setDuplicateOpen(false);
-              }}
-            >
-              Continuar mesmo assim
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
-  );
-}
-
-function Field({
-  label,
-  error,
-  children,
-}: {
-  label: string;
-  error?: string;
-  children: React.ReactNode;
-}) {
   return (
-    <div className="space-y-1.5">
-      <Label className="text-base">{label}</Label>
-      {children}
-      {error && <p className="text-sm text-destructive">{error}</p>}
-    </div>
+    <QueueEntryConfirmCompleteForm
+      entry={stage.entry}
+      onBackAction={() => setStage({ step: "lookup" })}
+    />
   );
 }

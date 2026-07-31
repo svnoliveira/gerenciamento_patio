@@ -18,6 +18,7 @@ export interface ICompany {
     | "cpf"
     | "cellphone"
     | "type"
+    | "cargo_type"
     | "created_at"
     | "updated_at"
   >[];

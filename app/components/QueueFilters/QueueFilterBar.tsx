@@ -2,6 +2,7 @@
 
 import {
   IOrderingOption,
+  STATUS_LABELS,
   TQueueFilterField,
 } from "@/app/interface/queue_entry/queue_entry";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
@@ -16,13 +17,10 @@ const FILTERS: TQueueFilterField[] = [
     key: "status",
     label: "Status",
     type: "select",
-    options: [
-      { value: "WAITING", label: "Aguardando" },
-      { value: "STANDBY", label: "Em espera" },
-      { value: "INSIDE", label: "No pátio" },
-      { value: "FINISHED", label: "Finalizado" },
-      { value: "CANCELLED", label: "Cancelado" },
-    ],
+    options: Object.entries(STATUS_LABELS).map(([key, value]) => ({
+      value: key,
+      label: value,
+    })),
   },
   {
     key: "job",

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X } from "lucide-react";
+import { CalendarIcon, Check, X } from "lucide-react";
 import { Badge } from "@/app/components/ui/badge";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
@@ -19,6 +19,9 @@ import {
 } from "@/app/components/ui/popover";
 import { TQueueFilterField } from "@/app/interface/queue_entry/queue_entry";
 import { formatDateForBadge } from "@/lib/formatDate";
+import { DateRange } from "react-day-picker";
+import { Calendar } from "../ui/calendar";
+import { format } from "date-fns";
 
 interface FilterBadgeProps {
   field: TQueueFilterField;
@@ -40,9 +43,15 @@ export function FilterBadge({
   onClear,
 }: FilterBadgeProps) {
   const [open, setOpen] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
   const [draft, setDraft] = useState<string | null>(value);
   const [draftAfter, setDraftAfter] = useState(valueAfter ?? "");
   const [draftBefore, setDraftBefore] = useState(valueBefore ?? "");
+
+  const range: DateRange | undefined = {
+    from: draftAfter ? new Date(draftAfter) : undefined,
+    to: draftBefore ? new Date(draftBefore) : undefined,
+  };
 
   const isActive =
     field.type === "dateRange"
@@ -129,24 +138,66 @@ export function FilterBadge({
         )}
 
         {field.type === "dateRange" && (
-          <div className="space-y-2">
-            <div className="space-y-1">
-              <label className="text-xs text-muted-foreground">De</label>
-              <Input
-                type="datetime-local"
-                value={draftAfter}
-                onChange={(e) => setDraftAfter(e.target.value)}
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-xs text-muted-foreground">Até</label>
-              <Input
-                type="datetime-local"
-                value={draftBefore}
-                onChange={(e) => setDraftBefore(e.target.value)}
-              />
-            </div>
-          </div>
+          <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+            <PopoverTrigger
+              nativeButton
+              render={
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-left font-normal"
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {range?.from ? (
+                    range.to ? (
+                      <>
+                        {format(range.from, "dd/MM/yyyy")} -{" "}
+                        {format(range.to, "dd/MM/yyyy")}
+                      </>
+                    ) : (
+                      format(range.from, "dd/MM/yyyy")
+                    )
+                  ) : (
+                    <span>Selecione um período</span>
+                  )}
+                </Button>
+              }
+            />
+            <PopoverContent className="w-auto p-0" align="start">
+              <div className="overflow-hidden rounded-lg border bg-popover shadow-lg">
+                <Calendar
+                  mode="range"
+                  selected={range}
+                  onSelect={(newRange) => {
+                    setDraftAfter(newRange?.from?.toISOString() ?? "");
+                    setDraftBefore(newRange?.to?.toISOString() ?? "");
+                  }}
+                  className="p-3"
+                />
+                <div className="flex items-center justify-end gap-2 border-t bg-muted/50 p-3">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 gap-1 text-xs text-destructive hover:text-destructive"
+                    onClick={() => {
+                      setDraftAfter("");
+                      setDraftBefore("");
+                    }}
+                  >
+                    <X className="h-3.5 w-3.5" />
+                    Limpar
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="h-8 gap-1 text-xs"
+                    onClick={() => setCalendarOpen(false)}
+                  >
+                    <Check className="h-3.5 w-3.5" />
+                    OK
+                  </Button>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
         )}
 
         <Button size="sm" className="w-full" onClick={handleConfirm}>

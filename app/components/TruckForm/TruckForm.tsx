@@ -30,16 +30,20 @@ import {
   updateTruck,
   deleteTruck,
 } from "@/app/actions/api/server/trucks";
-import { ITruck } from "@/app/interface/truck/truck";
+import { ITruck, TRUCK_TYPES } from "@/app/interface/truck/truck";
 import { truckSchema, TruckFormInput, TruckFormOutput } from "./schema";
 import { formatCellphone, formatCPF, formatPlate } from "@/lib/formatNumbers";
 
-// TODO: replace with your real Truck.Type TextChoices values
 const TYPE_OPTIONS = [
   { value: "Granel", label: "Granel" },
   { value: "Bag", label: "Bag" },
   { value: "Pallet", label: "Pallet" },
 ];
+
+const TRUCK_TYPE_OPTIONS = Object.entries(TRUCK_TYPES).map(([key, value]) => ({
+  value: key,
+  label: value,
+}));
 
 export function TruckForm({
   truck,
@@ -64,6 +68,7 @@ export function TruckForm({
       cpf: truck?.cpf ?? "",
       cellphone: truck?.cellphone ?? "",
       product: truck?.product ?? "",
+      cargo_type: truck?.cargo_type ?? "",
       type: truck?.type ?? "",
       company: truck?.company?.id ?? undefined,
     },
@@ -192,7 +197,39 @@ export function TruckForm({
         </div>
 
         <div className="space-y-2">
-          <Label>Tipo</Label>
+          <Label>Tipo de carga</Label>
+          <Select
+            value={form.watch("cargo_type")}
+            onValueChange={(value) =>
+              form.setValue("cargo_type", value || "", { shouldValidate: true })
+            }
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Tipo">
+                {
+                  TYPE_OPTIONS.find(
+                    (opt) => opt.value === form.watch("cargo_type"),
+                  )?.label
+                }
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {TYPE_OPTIONS.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {form.formState.errors.cargo_type && (
+            <p className="text-sm text-destructive">
+              {form.formState.errors.cargo_type.message}
+            </p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label>Tipo de veículo</Label>
           <Select
             value={form.watch("type")}
             onValueChange={(value) =>
@@ -202,13 +239,14 @@ export function TruckForm({
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Tipo">
                 {
-                  TYPE_OPTIONS.find((opt) => opt.value === form.watch("type"))
-                    ?.label
+                  TRUCK_TYPE_OPTIONS.find(
+                    (opt) => opt.value === form.watch("type"),
+                  )?.label
                 }
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              {TYPE_OPTIONS.map((opt) => (
+              {TRUCK_TYPE_OPTIONS.map((opt) => (
                 <SelectItem key={opt.value} value={opt.value}>
                   {opt.label}
                 </SelectItem>

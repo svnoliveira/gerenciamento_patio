@@ -24,7 +24,11 @@ export default function HomePage() {
             size="lg"
             className="h-16 text-xl font-semibold"
             nativeButton={false}
-            render={<Link href="/queue-entries/new">REALIZAR AGENDAMENTO</Link>}
+            render={
+              <Link href="/dashboard/schedule/queue-entries/new">
+                REALIZAR AGENDAMENTO
+              </Link>
+            }
           />
           <Button
             size="lg"
@@ -32,7 +36,9 @@ export default function HomePage() {
             className="h-16 text-xl font-semibold"
             nativeButton={false}
             render={
-              <Link href="/queue-entries/confirm">CONFIRMAR AGENDAMENTO</Link>
+              <Link href="/dashboard/schedule/queue-entries/confirm">
+                CONFIRMAR AGENDAMENTO
+              </Link>
             }
           />
           <Button

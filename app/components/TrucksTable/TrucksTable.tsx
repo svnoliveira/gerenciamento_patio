@@ -32,6 +32,7 @@ export function TrucksTable({
             <TableHead>Empresa</TableHead>
             <TableHead>Produto</TableHead>
             <TableHead>Tipo</TableHead>
+            <TableHead>Carga</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -61,6 +62,7 @@ export function TrucksTable({
                 <TableCell>{truck.company?.name ?? "—"}</TableCell>
                 <TableCell>{truck.product}</TableCell>
                 <TableCell>{truck.type}</TableCell>
+                <TableCell>{truck.cargo_type}</TableCell>
               </TableRow>
             ))
           )}

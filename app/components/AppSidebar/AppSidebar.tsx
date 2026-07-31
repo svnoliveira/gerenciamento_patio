@@ -12,6 +12,9 @@ import {
   ListOrdered,
   Radio,
   Upload,
+  ListCheck,
+  ListEnd,
+  ListCollapse,
 } from "lucide-react";
 import {
   Sidebar,
@@ -62,6 +65,25 @@ const NAV_ITEMS: {
     label: "Histórico de Agendamentos",
     icon: ListOrdered,
     roles: ["ADMIN", "OPERATOR", "COMPANY"],
+  },
+
+  {
+    href: "/dashboard/schedule",
+    label: "Agendamentos",
+    icon: ListCollapse,
+    roles: ["ADMIN", "OPERATOR", "COMPANY"],
+  },
+  {
+    href: "/dashboard/schedule/queue-entries/new",
+    label: "Novo Agendamento",
+    icon: ListEnd,
+    roles: ["ADMIN", "OPERATOR"],
+  },
+  {
+    href: "/dashboard/schedule/queue-entries/confirm",
+    label: "Confirmar Agendamento",
+    icon: ListCheck,
+    roles: ["ADMIN", "OPERATOR"],
   },
   {
     href: "/dashboard/companies",
@@ -131,7 +153,7 @@ export function AppSidebar({ role }: { role: Role }) {
                 return (
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
-                      isActive={pathname.startsWith(item.href)}
+                      isActive={pathname === item.href}
                       render={
                         <Link href={item.href}>
                           <Icon />

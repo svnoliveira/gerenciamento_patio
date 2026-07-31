@@ -15,6 +15,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/components/ui/select";
+import { formatCPF, formatCellphone, formatPlate } from "@/lib/formatNumbers";
+import { checkDuplicatePlate } from "@/lib/checkDuplicatePlate";
+import { createWalkUpQueueEntry } from "@/app/actions/api/server/queue-entries-walkup";
+import {
+  queueEntryWalkUpSchema,
+  QueueEntryWalkUpFormInput,
+  QueueEntryWalkUpFormOutput,
+} from "./schema";
+import { PhotoInput } from "../PhotoInput/PhotoInput";
+import { AreaSelect } from "../AreaSelect/AreaSelect";
+import { EstimateDialog } from "../QueueEntryForm/EstimateDialog";
+import { compressImage } from "@/app/actions/api/client/compressImage";
+import { TRUCK_TYPES, CARGO_TYPE_OPTIONS } from "@/app/interface/truck/truck";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,102 +38,75 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/app/components/ui/alert-dialog";
-import { formatCPF, formatCellphone, formatPlate } from "@/lib/formatNumbers";
-import { checkDuplicatePlate } from "@/lib/checkDuplicatePlate";
-import { createQueueEntry } from "@/app/actions/api/server/queue-entries-create";
-import {
-  queueEntrySchema,
-  QueueEntryFormInput,
-  QueueEntryFormOutput,
-} from "./schema";
-import { ITrucksWithJobPhoto } from "@/app/interface/truck/truck";
-import { PhotoInput } from "../PhotoInput/PhotoInput";
-import { EstimateDialog } from "./EstimateDialog";
-import { clientApiFetch } from "@/app/actions/api/client/clientApiFetch";
-import { compressImage } from "@/app/actions/api/client/compressImage";
-
-// TODO: replace
-const TYPE_OPTIONS = [
-  { value: "Granel", label: "Granel" },
-  { value: "Bag", label: "Bag" },
-  { value: "Pallet", label: "Pallet" },
-];
 
 const JOB_OPTIONS = [
   { value: "Carga", label: "Carga" },
   { value: "Descarga", label: "Descarga" },
 ];
 
-export function QueueEntryForm({
-  data,
-  onSuccessAction,
-}: {
-  data?: ITrucksWithJobPhoto;
-  onSuccessAction?: () => void;
-}) {
+export function QueueEntryWalkUpForm() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [duplicateOpen, setDuplicateOpen] = useState(false);
+  const [pendingValues, setPendingValues] =
+    useState<QueueEntryWalkUpFormOutput | null>(null);
   const [estimateDialog, setEstimateDialog] = useState<{
     open: boolean;
     message: string | null;
     entryId: number | null;
   }>({ open: false, message: null, entryId: null });
-  const [duplicateOpen, setDuplicateOpen] = useState(false);
-  const [pendingValues, setPendingValues] =
-    useState<QueueEntryFormOutput | null>(null);
 
-  const form = useForm<QueueEntryFormInput, unknown, QueueEntryFormOutput>({
-    resolver: zodResolver(queueEntrySchema),
+  const form = useForm<
+    QueueEntryWalkUpFormInput,
+    unknown,
+    QueueEntryWalkUpFormOutput
+  >({
+    resolver: zodResolver(queueEntryWalkUpSchema),
     defaultValues: {
-      company_name: data?.company?.name ?? "",
-      truck_plate: data?.plate ?? "",
-      truck_driver: data?.driver ?? "",
-      truck_cpf: data?.cpf ?? "",
-      truck_cellphone: data?.cellphone ?? "",
-      truck_product: data?.product ?? "",
-      truck_type: data?.type ?? "",
-      job: data?.job ?? ("" as never),
-      photo: data?.photo ?? undefined,
+      company_name: "",
+      truck_plate: "",
+      truck_driver: "",
+      truck_cpf: "",
+      truck_cellphone: "",
+      truck_product: "",
+      truck_type: "",
+      truck_cargo_type: "" as never,
+      job: "" as never,
+      area: undefined,
+      photo: undefined,
     },
   });
 
-  const truckTypeValue = useWatch({
+  // const truckTypeValue = useWatch({
+  //   control: form.control,
+  //   name: "truck_type",
+  // });
+  const cargoTypeValue = useWatch({
     control: form.control,
-    name: "truck_type",
+    name: "truck_cargo_type",
   });
+  const jobValue = useWatch({ control: form.control, name: "job" });
+  const areaValue = useWatch({ control: form.control, name: "area" });
 
-  const jobValue = useWatch({
-    control: form.control,
-    name: "job",
-  });
-
-  async function submitEntry(values: QueueEntryFormOutput) {
+  async function submitEntry(values: QueueEntryWalkUpFormOutput) {
     startTransition(async () => {
       try {
         const compressedPhoto = await compressImage(
           values.photo,
           values.truck_plate,
         );
-        const entry = await createQueueEntry(values, compressedPhoto);
-        toast("Agendamento registrado com sucesso!");
+        const result = await createWalkUpQueueEntry(values, compressedPhoto);
+        toast("Caminhão registrado e confirmado no pátio!");
         form.reset();
-        onSuccessAction?.();
-
-        const estimateRes = await clientApiFetch(
-          `/queue-entries/${entry.id}/estimate/`,
-        );
-        const estimateData = estimateRes.ok ? await estimateRes.json() : null;
 
         setEstimateDialog({
           open: true,
-          message: estimateData?.message ?? null,
-          entryId: entry.id,
+          message: result.estimate?.message ?? null,
+          entryId: result.id,
         });
       } catch (error) {
         toast(
-          error instanceof Error
-            ? error.message
-            : "Erro ao registrar agendamento",
+          error instanceof Error ? error.message : "Erro ao registrar caminhão",
         );
       }
     });
@@ -133,7 +119,7 @@ export function QueueEntryForm({
     setEstimateDialog({ open: false, message: null, entryId: null });
   }
 
-  async function onSubmit(values: QueueEntryFormOutput) {
+  async function onSubmit(values: QueueEntryWalkUpFormOutput) {
     const isDuplicate = await checkDuplicatePlate(values.truck_plate);
     if (isDuplicate) {
       setPendingValues(values);
@@ -150,7 +136,7 @@ export function QueueEntryForm({
         className="mx-auto flex w-full max-w-md flex-col gap-5"
       >
         <h1 className="text-3xl font-bold tracking-tight">
-          Realizar agendamento
+          Registrar caminhão
         </h1>
 
         <Field
@@ -225,23 +211,56 @@ export function QueueEntryForm({
           <Input className="h-14 text-lg" {...form.register("truck_product")} />
         </Field>
 
-        <Field
-          label="Tipo de veículo"
-          error={form.formState.errors.truck_type?.message}
-        >
+        <div className="space-y-2">
+          <Label>Tipo de veículo</Label>
           <Select
-            value={truckTypeValue}
+            value={form.watch("truck_type") || ""}
             onValueChange={(v) =>
               form.setValue("truck_type", v || "", { shouldValidate: true })
             }
           >
             <SelectTrigger className="h-14 w-full text-lg">
+              <SelectValue placeholder="Selecione o tipo de veículo" />
+            </SelectTrigger>
+            <SelectContent>
+              {TRUCK_TYPES.map((t) => (
+                <SelectItem key={t} value={t}>
+                  {t}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {form.formState.errors.truck_type && (
+            <p className="text-sm text-destructive">
+              {form.formState.errors.truck_type.message}
+            </p>
+          )}
+        </div>
+
+        <Field
+          label="Tipo de carga"
+          error={form.formState.errors.truck_cargo_type?.message}
+        >
+          <Select
+            value={cargoTypeValue}
+            onValueChange={(v) =>
+              form.setValue(
+                "truck_cargo_type",
+                v as "Granel" | "Bag" | "Pallet",
+                { shouldValidate: true },
+              )
+            }
+          >
+            <SelectTrigger className="h-14 w-full text-lg">
               <SelectValue placeholder="Selecione">
-                {TYPE_OPTIONS.find((o) => o.value === truckTypeValue)?.label}
+                {
+                  CARGO_TYPE_OPTIONS.find((o) => o.value === cargoTypeValue)
+                    ?.label
+                }
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              {TYPE_OPTIONS.map((o) => (
+              {CARGO_TYPE_OPTIONS.map((o) => (
                 <SelectItem key={o.value} value={o.value}>
                   {o.label}
                 </SelectItem>
@@ -274,6 +293,15 @@ export function QueueEntryForm({
           </Select>
         </Field>
 
+        <Field label="Área" error={form.formState.errors.area?.message}>
+          <AreaSelect
+            value={areaValue}
+            onChangeAction={(id) =>
+              form.setValue("area", id, { shouldValidate: true })
+            }
+          />
+        </Field>
+
         <Field
           label="Foto do caminhão"
           error={form.formState.errors.photo?.message}
@@ -293,7 +321,7 @@ export function QueueEntryForm({
           className="h-16 text-xl font-semibold"
           disabled={isPending}
         >
-          {isPending ? "Enviando..." : "Confirmar agendamento"}
+          {isPending ? "Enviando..." : "Registrar e confirmar"}
         </Button>
       </form>
 
