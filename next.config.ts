@@ -25,6 +25,11 @@ const nextConfig: NextConfig = {
       { hostname: "api.lrnagricola.com,br" },
     ],
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "15mb",
+    },
+  },
 
   async rewrites() {
     return [
