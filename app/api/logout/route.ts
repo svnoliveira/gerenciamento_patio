@@ -17,5 +17,7 @@ export async function GET(request: Request) {
     domain: COOKIE_DOMAIN,
   });
 
-  return NextResponse.redirect(new URL("/login", request.url));
+  const BASE_URL =
+    process.env.NEXT_PUBLIC_APP_URL || `https://${request.headers.get("host")}`;
+  return NextResponse.redirect(new URL("/login", BASE_URL));
 }
