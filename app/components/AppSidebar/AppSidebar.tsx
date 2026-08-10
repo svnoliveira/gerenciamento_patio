@@ -170,7 +170,10 @@ export function AppSidebar({ role }: { role: Role }) {
       </SidebarContent>
       <SidebarFooter>
         <Badge key={user?.id} variant="secondary" className="mx-auto">
-          {user?.name} · {user?.email}
+          {user?.name}
+        </Badge>
+        <Badge key={user?.id} variant="secondary" className="mx-auto">
+          {user?.email}
         </Badge>
         <Button onClick={handleLogout}>Deslogar</Button>
       </SidebarFooter>
