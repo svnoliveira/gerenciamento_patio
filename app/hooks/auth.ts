@@ -49,6 +49,7 @@ export function useAuth() {
       }
     } catch {
       setUser(null);
+      await logoutRequest();
     }
   };
 

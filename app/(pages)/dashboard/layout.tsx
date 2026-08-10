@@ -21,7 +21,9 @@ export default async function DashboardLayout({
   if (!accessToken) redirect("/login");
 
   const meRes = await serverApiFetch("/me/");
-  if (meRes.status === 401) redirect("/login");
+  if (meRes.status === 401) {
+    redirect("/api/logout");
+  }
 
   const user: IUser = await meRes.json();
 

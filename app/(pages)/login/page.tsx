@@ -1,3 +1,4 @@
+import { serverApiFetch } from "@/app/actions/api/server/serverApiFetch";
 import { LoginForm } from "@/app/components/LoginForm/LoginForm";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -7,7 +8,11 @@ export default async function Login() {
   const accessToken = cookieStore.get("access_token");
 
   if (accessToken) {
-    redirect("/dashboard");
+    const meRes = await serverApiFetch("/me/");
+    if (meRes.ok) {
+      redirect("/dashboard");
+    }
+    redirect("/api/logout");
   }
 
   return (
