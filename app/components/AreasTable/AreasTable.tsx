@@ -22,7 +22,7 @@ export function AreasTable({
   onSelect: (area: IArea) => void;
 }) {
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border h-167.5">
       <Table>
         <TableHeader>
           <TableRow>

@@ -25,7 +25,7 @@ export function CompaniesTable({
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border h-167.5">
       <Table>
         <TableHeader>
           <TableRow>

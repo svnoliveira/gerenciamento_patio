@@ -8,6 +8,7 @@ import { QueueEntryWalkUpFormOutput } from "@/app/components/QueueEntryForm/sche
 export async function createWalkUpQueueEntry(
   values: QueueEntryWalkUpFormOutput,
   photo: File,
+  document_photo: File,
 ) {
   const formData = new FormData();
 
@@ -22,6 +23,7 @@ export async function createWalkUpQueueEntry(
   formData.append("job", values.job);
   formData.append("area", String(values.area));
   formData.append("photo", photo, photo.name);
+  formData.append("document_photo", document_photo, document_photo.name);
 
   const res = await serverApiFetch("/queue-entries/", {
     method: "POST",

@@ -24,7 +24,7 @@ const FILTERS: TQueueFilterField[] = [
   },
   {
     key: "job",
-    label: "Tipo",
+    label: "Operação",
     type: "select",
     options: [
       { value: "Carga", label: "Carga" },

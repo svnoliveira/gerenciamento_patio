@@ -22,6 +22,11 @@ export const scheduleEntrySchema = z.object({
     message: "Selecione o tipo de carga",
   }),
   area: z.number().optional(),
+  document_photo: z
+    .instanceof(File, {
+      message: "Foto do documento deve ser um arquivo válido",
+    })
+    .optional(),
 });
 
 export type ScheduleEntryFormInput = z.input<typeof scheduleEntrySchema>;

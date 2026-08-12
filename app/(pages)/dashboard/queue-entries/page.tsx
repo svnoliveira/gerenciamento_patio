@@ -25,9 +25,10 @@ export default async function QueueEntriesPage({
   const sp = await searchParams;
   const page = sp.page ?? "1";
 
-  const params = new URLSearchParams({ page });
+  const params = new URLSearchParams({ page, page_size: "16" });
   PARAM_KEYS.forEach((key) => {
-    if (key !== "page" && sp[key]) params.set(key, sp[key]!);
+    if (key !== "page" && key !== "page_size" && sp[key])
+      params.set(key, sp[key]!);
   });
 
   const res = await serverApiFetch(`/queue-entries/?${params}`);

@@ -21,7 +21,7 @@ export function TrucksTable({
   onSelect: (truck: ITruck) => void;
 }) {
   return (
-    <div className="overflow-x-auto rounded-md border">
+    <div className="overflow-x-auto rounded-md border h-167.5">
       <Table>
         <TableHeader>
           <TableRow>

@@ -20,6 +20,7 @@ export function Pagination({
           <Button
             variant="outline"
             size="sm"
+            nativeButton={false}
             render={<Link href={`?page=${page - 1}`}>Anterior</Link>}
           />
         ) : (
@@ -31,6 +32,7 @@ export function Pagination({
           <Button
             variant="outline"
             size="sm"
+            nativeButton={false}
             render={<Link href={`?page=${page + 1}`}>Próxima</Link>}
           />
         ) : (

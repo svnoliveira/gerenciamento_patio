@@ -11,6 +11,7 @@ export async function completeScheduledEntry(
   await confirmQueueEntryDetails(id, {
     job: values.job,
     photo: values.photo,
+    document_photo: values.document_photo,
     ...(needsArea ? { area: values.area } : {}),
   });
 

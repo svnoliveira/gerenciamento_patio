@@ -16,6 +16,7 @@ import { formatDate } from "@/lib/formatDate";
 import { formatDuration } from "@/lib/formatDuration";
 import { STATUS_COLORS } from "@/lib/statusColors";
 import Link from "next/link";
+import { Camera, FileText } from "lucide-react";
 
 export function QueueEntriesTable({
   data,
@@ -23,8 +24,8 @@ export function QueueEntriesTable({
   data: IPaginatedQueueEntries | null;
 }) {
   return (
-    <div className="w-full overflow-x-auto rounded-md border">
-      <Table className="w-full min-w-350">
+    <div className="w-full overflow-x-auto rounded-md border h-167.5">
+      <Table className="w-full">
         <TableHeader>
           <TableRow>
             <TableHead>Placa</TableHead>
@@ -35,6 +36,8 @@ export function QueueEntriesTable({
             <TableHead>Área</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Operação</TableHead>
+            <TableHead>Foto</TableHead>
+            <TableHead>Documento</TableHead>
             <TableHead>Criado em</TableHead>
             <TableHead>Chegada</TableHead>
             <TableHead>Início operação</TableHead>
@@ -84,6 +87,32 @@ export function QueueEntriesTable({
                 </TableCell>
                 <TableCell>
                   {entry.job ? (JOB_LABELS[entry.job] ?? entry.job) : "—"}
+                </TableCell>
+                <TableCell>
+                  {entry.photo ? (
+                    <Link
+                      href={entry.photo}
+                      target="_blank"
+                      className="flex items-center justify-center"
+                    >
+                      <Camera className="h-4 w-4 text-primary" />
+                    </Link>
+                  ) : (
+                    "—"
+                  )}
+                </TableCell>
+                <TableCell>
+                  {entry.document_photo ? (
+                    <Link
+                      href={entry.document_photo}
+                      target="_blank"
+                      className="flex items-center justify-center"
+                    >
+                      <FileText className="h-4 w-4 text-primary" />
+                    </Link>
+                  ) : (
+                    "—"
+                  )}
                 </TableCell>
                 <TableCell>{formatDate(entry.created_at)}</TableCell>
                 <TableCell>{formatDate(entry.arrival_time)}</TableCell>

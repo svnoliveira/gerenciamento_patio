@@ -9,6 +9,7 @@ import { Pagination } from "../Pagination/Pagination";
 import { IQueueEntry } from "@/app/interface/queue_entry/queue_entry";
 import { IPaginatedResponse } from "@/app/interface/admin/global";
 import { IUser } from "@/app/interface/user/user";
+import { QueueFilterBar } from "../QueueFilters/QueueFilterBar";
 
 type PanelState =
   | { mode: "closed" }
@@ -34,6 +35,8 @@ export function SchedulePageClient({
           <Plus size={16} className="mr-1" /> Novo agendamento
         </Button>
       </div>
+
+      <QueueFilterBar />
 
       <div
         className={

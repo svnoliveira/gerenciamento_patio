@@ -165,6 +165,18 @@ export function QueueEntryDetailCard({
             />
           </div>
         )}
+
+        {isFull && entry.document_photo && (
+          <div className="relative aspect-4/3 w-full overflow-hidden rounded-xl border shadow-sm">
+            <Image
+              src={entry.document_photo}
+              alt={`Foto do documento ${entry.truck_plate}`}
+              fill
+              className="object-cover"
+              sizes="(max-width: 500px) 100vw, 448px"
+            />
+          </div>
+        )}
       </CardContent>
     </Card>
   );

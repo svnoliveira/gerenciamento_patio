@@ -19,7 +19,7 @@ export function UsersTable({
   onSelect: (user: IUser) => void;
 }) {
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border h-167.5">
       <Table>
         <TableHeader>
           <TableRow>

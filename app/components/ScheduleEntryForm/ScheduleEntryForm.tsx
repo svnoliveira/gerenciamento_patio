@@ -30,6 +30,8 @@ import { formatCPF, formatCellphone, formatPlate } from "@/lib/formatNumbers";
 import { findTrucksByPlate } from "@/lib/findTruckByPlate";
 import { AreaSelect } from "../AreaSelect/AreaSelect";
 import { CompanySelect } from "../CompanySelect/CompanySelect";
+import { PhotoInput } from "../PhotoInput/PhotoInput";
+import { compressImage } from "@/app/actions/api/client/compressImage";
 import {
   createScheduleEntry,
   updateScheduleEntry,
@@ -77,6 +79,7 @@ export function ScheduleEntryForm({
       truck_type: entry?.truck_type ?? "",
       truck_cargo_type: entry?.truck_cargo_type ?? ("" as never),
       area: entry?.area?.id,
+      document_photo: undefined,
     },
   });
 
@@ -105,11 +108,19 @@ export function ScheduleEntryForm({
   async function onSubmit(values: ScheduleEntryFormOutput) {
     setIsPending(true);
     try {
+      const compressedDocumentPhoto = values.document_photo
+        ? await compressImage(values.document_photo, values.truck_plate)
+        : undefined;
+      const payload = {
+        ...values,
+        document_photo: compressedDocumentPhoto,
+      };
+
       if (entry) {
-        await updateScheduleEntry(entry.id, values);
+        await updateScheduleEntry(entry.id, payload);
         toast("Agendamento atualizado com sucesso!");
       } else {
-        await createScheduleEntry(values);
+        await createScheduleEntry(payload);
         toast("Agendamento criado com sucesso!");
       }
       onDoneAction();
@@ -331,6 +342,22 @@ export function ScheduleEntryForm({
             form.setValue("area", id, { shouldValidate: true })
           }
         />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Foto do documento (opcional)</Label>
+        <Controller
+          name="document_photo"
+          control={form.control}
+          render={({ field: { value, onChange } }) => (
+            <PhotoInput value={value} onChangeAction={onChange} />
+          )}
+        />
+        {form.formState.errors.document_photo && (
+          <p className="text-sm text-destructive">
+            {form.formState.errors.document_photo.message}
+          </p>
+        )}
       </div>
 
       <div className="flex items-center justify-between pt-2">

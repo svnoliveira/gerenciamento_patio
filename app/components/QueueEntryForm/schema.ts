@@ -26,6 +26,9 @@ export const queueEntryWalkUpSchema = z.object({
   photo: z
     .instanceof(File, { message: "Foto é obrigatória" })
     .refine((file) => file.size > 0, "Foto é obrigatória"),
+  document_photo: z
+    .instanceof(File, { message: "Foto do documento é obrigatória" })
+    .refine((file) => file.size > 0, "Foto do documento é obrigatória"),
 });
 
 export type QueueEntryWalkUpFormInput = z.input<typeof queueEntryWalkUpSchema>;

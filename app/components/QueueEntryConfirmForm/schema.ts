@@ -6,15 +6,32 @@ export const queueEntryCompleteBaseSchema = z.object({
   photo: z
     .instanceof(File, { message: "Foto é obrigatória" })
     .refine((file) => file.size > 0, "Foto é obrigatória"),
+  document_photo: z
+    .instanceof(File, { message: "Foto do documento é obrigatória" })
+    .optional()
+    .refine(
+      (file) => file === undefined || file.size > 0,
+      "Foto do documento é obrigatória",
+    ),
 });
 
-export function buildQueueEntryCompleteSchema(needsArea: boolean) {
+export function buildQueueEntryCompleteSchema(
+  needsArea: boolean,
+  hasDocumentPhoto: boolean,
+) {
   return queueEntryCompleteBaseSchema.superRefine((data, ctx) => {
     if (needsArea && !data.area) {
       ctx.addIssue({
         code: "custom",
         message: "Selecione uma área",
         path: ["area"],
+      });
+    }
+    if (!hasDocumentPhoto && !data.document_photo) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Foto do documento é obrigatória",
+        path: ["document_photo"],
       });
     }
   });

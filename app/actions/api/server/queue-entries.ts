@@ -41,13 +41,19 @@ function revalidateQueue() {
 
 export async function confirmQueueEntryDetails(
   id: number,
-  data: { area?: number; job?: string; photo?: File },
+  data: { area?: number; job?: string; photo?: File; document_photo?: File },
 ) {
   const formData = new FormData();
   if (data.area !== undefined) formData.append("area", String(data.area));
   if (data.job !== undefined) formData.append("job", data.job);
   if (data.photo !== undefined)
     formData.append("photo", data.photo, data.photo.name);
+  if (data.document_photo !== undefined)
+    formData.append(
+      "document_photo",
+      data.document_photo,
+      data.document_photo.name,
+    );
 
   const result = await callAction(
     `/queue-entries/${id}/confirm/`,
@@ -100,7 +106,7 @@ export async function cancel(id: number) {
 export async function setStatus(
   id: number,
   status: string,
-  extra?: { area?: number; job?: string; photo?: File },
+  extra?: { area?: number; job?: string; photo?: File; document_photo?: File },
 ) {
   const formData = new FormData();
   formData.append("status", status);
@@ -108,6 +114,12 @@ export async function setStatus(
   if (extra?.job !== undefined) formData.append("job", extra.job);
   if (extra?.photo !== undefined)
     formData.append("photo", extra.photo, extra.photo.name);
+  if (extra?.document_photo !== undefined)
+    formData.append(
+      "document_photo",
+      extra.document_photo,
+      extra.document_photo.name,
+    );
 
   const result = await callAction(
     `/queue-entries/${id}/set-status/`,

@@ -4,6 +4,7 @@ import { useForm, Controller, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { toast } from "sonner";
 import { Button } from "@/app/components/ui/button";
 import { Label } from "@/app/components/ui/label";
@@ -39,9 +40,10 @@ export function QueueEntryConfirmCompleteForm({
 }) {
   const router = useRouter();
   const needsArea = !entry.area;
+  const hasSavedDocumentPhoto = Boolean(entry.document_photo);
   const schema = useMemo(
-    () => buildQueueEntryCompleteSchema(needsArea),
-    [needsArea],
+    () => buildQueueEntryCompleteSchema(needsArea, hasSavedDocumentPhoto),
+    [needsArea, hasSavedDocumentPhoto],
   );
 
   const [isPending, setIsPending] = useState(false);
@@ -57,6 +59,7 @@ export function QueueEntryConfirmCompleteForm({
       job: "" as never,
       area: entry.area?.id,
       photo: undefined,
+      document_photo: undefined,
     },
   });
 
@@ -65,12 +68,17 @@ export function QueueEntryConfirmCompleteForm({
       job: "" as never,
       area: entry.area?.id,
       photo: undefined,
+      document_photo: undefined,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- resync defaults only when a different entry is picked
   }, [entry.id]);
 
   const jobValue = useWatch({ control: form.control, name: "job" });
   const areaValue = useWatch({ control: form.control, name: "area" });
+  const documentPhotoValue = useWatch({
+    control: form.control,
+    name: "document_photo",
+  });
 
   async function onSubmit(values: QueueEntryCompleteFormValues) {
     setIsPending(true);
@@ -79,11 +87,23 @@ export function QueueEntryConfirmCompleteForm({
         values.photo,
         entry.truck_plate,
       );
+
+      const compressedDocumentPhoto = values.document_photo
+        ? await compressImage(
+            values.document_photo,
+            `${entry.truck_plate}-document`,
+          )
+        : undefined;
       const result = await completeScheduledEntry(
         entry.id,
-        { ...values, photo: compressedPhoto },
+        {
+          ...values,
+          photo: compressedPhoto,
+          document_photo: compressedDocumentPhoto,
+        },
         needsArea,
       );
+
       toast("Caminhão confirmado no pátio!");
       setEstimateDialog({
         open: true,
@@ -187,6 +207,41 @@ export function QueueEntryConfirmCompleteForm({
           {form.formState.errors.photo && (
             <p className="text-sm text-destructive">
               {form.formState.errors.photo.message}
+            </p>
+          )}
+        </div>
+
+        {entry.document_photo && !documentPhotoValue ? (
+          <div className="space-y-2 rounded-xl border p-3">
+            <Label className="text-base">Foto do documento salva</Label>
+            <div className="relative aspect-4/3 w-full overflow-hidden rounded-xl border bg-black/5">
+              <Image
+                src={entry.document_photo}
+                alt="Foto do documento salva"
+                fill
+                className="object-cover"
+                sizes="(max-width: 500px) 100vw, 500px"
+              />
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Esta foto já foi salva no agendamento. Faça upload apenas se
+              quiser substituí-la.
+            </p>
+          </div>
+        ) : null}
+
+        <div className="space-y-1.5">
+          <Label className="text-base">Foto do documento</Label>
+          <Controller
+            name="document_photo"
+            control={form.control}
+            render={({ field: { value, onChange } }) => (
+              <PhotoInput value={value} onChangeAction={onChange} />
+            )}
+          />
+          {form.formState.errors.document_photo && (
+            <p className="text-sm text-destructive">
+              {form.formState.errors.document_photo.message}
             </p>
           )}
         </div>

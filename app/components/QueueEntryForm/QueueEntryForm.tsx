@@ -74,6 +74,7 @@ export function QueueEntryWalkUpForm() {
       job: "" as never,
       area: undefined,
       photo: undefined,
+      document_photo: undefined,
     },
   });
 
@@ -95,7 +96,15 @@ export function QueueEntryWalkUpForm() {
           values.photo,
           values.truck_plate,
         );
-        const result = await createWalkUpQueueEntry(values, compressedPhoto);
+        const compressedDocumentPhoto = await compressImage(
+          values.document_photo,
+          values.truck_plate,
+        );
+        const result = await createWalkUpQueueEntry(
+          values,
+          compressedPhoto,
+          compressedDocumentPhoto,
+        );
         toast("Caminhão registrado e confirmado no pátio!");
         form.reset();
 
@@ -308,6 +317,19 @@ export function QueueEntryWalkUpForm() {
         >
           <Controller
             name="photo"
+            control={form.control}
+            render={({ field: { value, onChange } }) => (
+              <PhotoInput value={value} onChangeAction={onChange} />
+            )}
+          />
+        </Field>
+
+        <Field
+          label="Foto do documento"
+          error={form.formState.errors.document_photo?.message}
+        >
+          <Controller
+            name="document_photo"
             control={form.control}
             render={({ field: { value, onChange } }) => (
               <PhotoInput value={value} onChangeAction={onChange} />

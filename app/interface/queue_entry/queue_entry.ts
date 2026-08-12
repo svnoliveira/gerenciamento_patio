@@ -44,6 +44,7 @@ export interface IQueueEntry {
   updated_at: string;
   queue_order: number | null;
   photo: string | null;
+  document_photo: string | null;
   company_name: string | null;
   truck_plate: string;
   truck_product: string;

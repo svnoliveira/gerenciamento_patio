@@ -148,10 +148,10 @@ export function AppSidebar({ role }: { role: Role }) {
           <SidebarGroupLabel>Gerenciamento</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {visibleItems.map((item) => {
+              {visibleItems.map((item, i) => {
                 const Icon = item.icon;
                 return (
-                  <SidebarMenuItem key={item.href}>
+                  <SidebarMenuItem key={item.href + i}>
                     <SidebarMenuButton
                       isActive={pathname === item.href}
                       render={
@@ -172,7 +172,11 @@ export function AppSidebar({ role }: { role: Role }) {
         <Badge key={user?.id} variant="secondary" className="mx-auto">
           {user?.name}
         </Badge>
-        <Badge key={user?.id} variant="secondary" className="mx-auto">
+        <Badge
+          key={user?.id + (user?.email || "")}
+          variant="secondary"
+          className="mx-auto"
+        >
           {user?.email}
         </Badge>
         <Button onClick={handleLogout}>Deslogar</Button>
