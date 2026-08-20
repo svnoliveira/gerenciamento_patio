@@ -35,7 +35,9 @@ export async function serverApiFetch(path: string, options: RequestInit = {}) {
             sameSite: "lax",
             path: "/",
           });
-        } catch {}
+        } catch {
+          console.warn("cookie set skipped, non-action context:", path);
+        }
 
         res = await doFetch(access);
       }
