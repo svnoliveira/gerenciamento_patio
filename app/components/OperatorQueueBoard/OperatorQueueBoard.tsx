@@ -18,6 +18,7 @@ import {
   awaitConclusion,
   finish,
   setOrder,
+  finishDirectlyAction,
 } from "@/app/actions/api/server/queue-entries";
 
 import { AreaTabs } from "./AreaTabs";
@@ -183,6 +184,17 @@ export function OperatorQueueBoard() {
     refetch();
   }
 
+  async function handleFinishDirectly(entry: IQueueEntry) {
+    setAreaDialogEntry(null);
+    try {
+      await finishDirectlyAction(entry.id);
+      toast("Finalizado com NF entregue");
+    } catch (err) {
+      toast(err instanceof Error ? err.message : "Erro ao finalizar");
+    }
+    refetch();
+  }
+
   // --- Area (right panel) actions ---
 
   async function handleEndOperation(entry: IQueueEntry) {
@@ -277,6 +289,7 @@ export function OperatorQueueBoard() {
         onOpenChangeAction={(open) => !open && setAreaDialogEntry(null)}
         onCancelAction={handleRequestCancel}
         onEndOperationAction={handleEndOperation}
+        onFinishDirectlyAction={handleFinishDirectly}
         onDetailsAction={handleDetails}
       />
 

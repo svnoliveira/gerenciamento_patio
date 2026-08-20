@@ -6,13 +6,39 @@ export async function serverApiFetch(path: string, options: RequestInit = {}) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("access_token")?.value;
 
-  const res = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers: {
-      ...(options.headers || {}),
-      Authorization: accessToken ? `Bearer ${accessToken}` : "",
-    },
-  });
+  const doFetch = (token: string | undefined) =>
+    fetch(`${API_URL}${path}`, {
+      ...options,
+      headers: {
+        ...(options.headers || {}),
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+    });
+
+  let res = await doFetch(accessToken);
+
+  if (res.status === 401) {
+    const refreshToken = cookieStore.get("refresh_token")?.value;
+    if (refreshToken) {
+      const refreshRes = await fetch(`${API_URL}/refresh/`, {
+        method: "POST",
+        headers: { Cookie: `refresh_token=${refreshToken}` },
+      });
+
+      if (refreshRes.ok) {
+        const { access } = await refreshRes.json();
+
+        cookieStore.set("access_token", access, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          path: "/",
+        });
+
+        res = await doFetch(access);
+      }
+    }
+  }
 
   return res;
 }

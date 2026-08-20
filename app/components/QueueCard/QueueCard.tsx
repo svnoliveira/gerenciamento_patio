@@ -23,14 +23,13 @@ export function QueueCard({ entry }: { entry: IQueueEntry }) {
               {entry.truck_plate}
             </span>
           </div>
-
-          <Badge
-            variant="outline"
-            className={`px-3 py-1 text-sm ${STATUS_COLORS[entry.status]}`}
-          >
-            {STATUS_LABELS[entry.status] ?? entry.status}
-          </Badge>
         </div>
+        <Badge
+          variant="outline"
+          className={`px-3 py-1 text-sm ${STATUS_COLORS[entry.status]}`}
+        >
+          {STATUS_LABELS[entry.status] ?? entry.status}
+        </Badge>
 
         <div className="flex justify-between text-sm text-muted-foreground flex-col gap-1">
           <span>Area: {entry.area?.name ?? "Sem área"}</span>

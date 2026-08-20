@@ -16,6 +16,7 @@ export function AreaEntryActionDialog({
   onOpenChangeAction,
   onCancelAction,
   onEndOperationAction,
+  onFinishDirectlyAction,
   onDetailsAction,
 }: {
   entry: IQueueEntry | null;
@@ -23,6 +24,7 @@ export function AreaEntryActionDialog({
   onOpenChangeAction: (open: boolean) => void;
   onCancelAction: (entry: IQueueEntry) => void;
   onEndOperationAction: (entry: IQueueEntry) => void;
+  onFinishDirectlyAction: (entry: IQueueEntry) => void;
   onDetailsAction: (entry: IQueueEntry) => void;
 }) {
   if (!entry) return null;
@@ -42,7 +44,14 @@ export function AreaEntryActionDialog({
             className="h-14 bg-emerald-600 text-lg text-white hover:bg-emerald-700"
             onClick={() => onEndOperationAction(entry)}
           >
-            Encerrar operação
+            Encerrar operação (Sem NF)
+          </Button>
+          <Button
+            className="h-14 text-lg"
+            variant="outline"
+            onClick={() => onFinishDirectlyAction(entry)}
+          >
+            Finalizar (NF entregue)
           </Button>
           <Button
             className="h-14 text-lg"

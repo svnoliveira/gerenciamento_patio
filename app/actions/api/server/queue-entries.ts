@@ -158,3 +158,12 @@ export async function normalizeQueue(areaId: number) {
   revalidateQueue();
   return result;
 }
+
+export async function finishDirectlyAction(id: number) {
+  const result = await callAction(
+    `/queue-entries/${id}/finish-directly/`,
+    "PATCH",
+  );
+  revalidateQueue();
+  return result;
+}

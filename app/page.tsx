@@ -1,7 +1,9 @@
 import Image from "next/image";
-import { Button } from "./components/ui/button";
 import Link from "next/link";
+import { Suspense } from "react";
+import { Button } from "./components/ui/button";
 import { Navbar } from "./components/NavBar/NavBar";
+import { AuthGatedHomeButtons } from "./components/AuthGatedHomeButtons/AuthGatedHomeButtons";
 
 export default function HomePage() {
   return (
@@ -20,27 +22,9 @@ export default function HomePage() {
         </div>
 
         <div className="flex w-full max-w-sm flex-col gap-4">
-          <Button
-            size="lg"
-            className="h-16 text-xl font-semibold"
-            nativeButton={false}
-            render={
-              <Link href="/dashboard/schedule/queue-entries/new">
-                REALIZAR AGENDAMENTO
-              </Link>
-            }
-          />
-          <Button
-            size="lg"
-            variant="outline"
-            className="h-16 text-xl font-semibold"
-            nativeButton={false}
-            render={
-              <Link href="/dashboard/schedule/queue-entries/confirm">
-                CONFIRMAR AGENDAMENTO
-              </Link>
-            }
-          />
+          <Suspense fallback={<div className="h-16" />}>
+            <AuthGatedHomeButtons />
+          </Suspense>
           <Button
             size="lg"
             variant="secondary"
