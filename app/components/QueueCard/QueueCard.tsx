@@ -32,8 +32,12 @@ export function QueueCard({ entry }: { entry: IQueueEntry }) {
           </Badge>
         </div>
 
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>{entry.area?.name ?? "Sem área"}</span>
+        <div className="flex justify-between text-sm text-muted-foreground flex-col gap-1">
+          <span>Area: {entry.area?.name ?? "Sem área"}</span>
+
+          <span>{entry?.truck_driver}</span>
+          <span>Empresa: {entry?.company_name}</span>
+          <span>Carga: {entry?.truck_product}</span>
           <span>Criado em: {formatDate(entry.created_at)}</span>
         </div>
       </CardContent>
