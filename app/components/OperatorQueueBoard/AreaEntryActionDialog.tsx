@@ -44,7 +44,7 @@ export function AreaEntryActionDialog({
             className="h-14 bg-emerald-600 text-lg text-white hover:bg-emerald-700"
             onClick={() => onEndOperationAction(entry)}
           >
-            Encerrar operação (Sem NF)
+            Encerrar operação (Aguardar NF)
           </Button>
           <Button
             className="h-14 text-lg"

@@ -20,6 +20,7 @@ export function QueueEntryActionDialog({
   onMovePositionAction,
   onFinishAction,
   onDetailsAction,
+  onChangeAreaAction,
 }: {
   entry: IQueueEntry | null;
   open: boolean;
@@ -30,6 +31,7 @@ export function QueueEntryActionDialog({
   onMovePositionAction: (entry: IQueueEntry) => void;
   onFinishAction: (entry: IQueueEntry) => void;
   onDetailsAction: (entry: IQueueEntry) => void;
+  onChangeAreaAction: (entry: IQueueEntry) => void;
 }) {
   if (!entry) return null;
 
@@ -67,6 +69,13 @@ export function QueueEntryActionDialog({
                 onClick={() => onMovePositionAction(entry)}
               >
                 Mover para posição...
+              </Button>
+              <Button
+                className="h-14 text-lg"
+                variant="outline"
+                onClick={() => onChangeAreaAction(entry)}
+              >
+                Trocar área...
               </Button>
             </>
           )}

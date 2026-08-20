@@ -19,6 +19,7 @@ import {
   finish,
   setOrder,
   finishDirectlyAction,
+  changeAreaAction,
 } from "@/app/actions/api/server/queue-entries";
 
 import { AreaTabs } from "./AreaTabs";
@@ -38,6 +39,7 @@ import {
 import { groupBoardEntries } from "@/lib/groupQueueEntries";
 import { AreaEntryActionDialog } from "./AreaEntryActionDialog";
 import { AreaOperationPanel } from "./AreaOperationPanel";
+import { ChangeAreaDialog } from "./ChangeAreaDialog";
 
 const QUEUE_STATUSES = "SCHEDULED,ON_YARD,AWAITING_CONCLUSION,IN_OPERATION";
 const POLL_INTERVAL_MS = 5000;
@@ -71,6 +73,9 @@ export function OperatorQueueBoard() {
   );
   const [positionEntry, setPositionEntry] = useState<IQueueEntry | null>(null);
   const [cancelTarget, setCancelTarget] = useState<IQueueEntry | null>(null);
+  const [changeAreaEntry, setChangeAreaEntry] = useState<IQueueEntry | null>(
+    null,
+  );
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -234,6 +239,23 @@ export function OperatorQueueBoard() {
     refetch();
   }
 
+  function handleRequestChangeArea(entry: IQueueEntry) {
+    setQueueDialogEntry(null);
+    setChangeAreaEntry(entry);
+  }
+
+  async function handleConfirmChangeArea(areaId: number) {
+    if (!changeAreaEntry) return;
+    try {
+      await changeAreaAction(changeAreaEntry.id, areaId);
+      toast("Área alterada");
+    } catch (err) {
+      toast(err instanceof Error ? err.message : "Erro ao trocar área");
+    }
+    setChangeAreaEntry(null);
+    refetch();
+  }
+
   if (board.loading)
     return <p className="text-muted-foreground">Carregando fila...</p>;
 
@@ -281,6 +303,7 @@ export function OperatorQueueBoard() {
         onMovePositionAction={handleMovePosition}
         onFinishAction={handleFinish}
         onDetailsAction={handleDetails}
+        onChangeAreaAction={handleRequestChangeArea}
       />
 
       <AreaEntryActionDialog
@@ -310,6 +333,13 @@ export function OperatorQueueBoard() {
           setPositionEntry(null);
           refetch();
         }}
+      />
+
+      <ChangeAreaDialog
+        open={changeAreaEntry !== null}
+        onOpenChangeAction={(open) => !open && setChangeAreaEntry(null)}
+        currentAreaId={changeAreaEntry?.area?.id}
+        onConfirmAction={handleConfirmChangeArea}
       />
 
       <CancelConfirmDialog

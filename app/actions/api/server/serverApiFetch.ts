@@ -28,12 +28,14 @@ export async function serverApiFetch(path: string, options: RequestInit = {}) {
       if (refreshRes.ok) {
         const { access } = await refreshRes.json();
 
-        cookieStore.set("access_token", access, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-          path: "/",
-        });
+        try {
+          cookieStore.set("access_token", access, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            path: "/",
+          });
+        } catch {}
 
         res = await doFetch(access);
       }

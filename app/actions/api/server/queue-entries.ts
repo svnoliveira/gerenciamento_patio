@@ -167,3 +167,13 @@ export async function finishDirectlyAction(id: number) {
   revalidateQueue();
   return result;
 }
+
+export async function changeAreaAction(id: number, areaId: number) {
+  const result = await callAction(
+    `/queue-entries/${id}/change-area/`,
+    "PATCH",
+    { area: areaId },
+  );
+  revalidateQueue();
+  return result;
+}
