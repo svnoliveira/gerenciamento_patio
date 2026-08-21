@@ -32,7 +32,7 @@ export function QueueCard({ entry }: { entry: IQueueEntry }) {
         </Badge>
 
         <div className="flex justify-between text-sm text-muted-foreground flex-col gap-1">
-          <span>Area: {entry.area?.name ?? "Sem área"}</span>
+          <span>{entry?.job ?? "Indefinido"}</span>
 
           <span>{entry?.truck_driver}</span>
           <span>Empresa: {entry?.company_name}</span>
