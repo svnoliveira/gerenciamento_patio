@@ -2,7 +2,7 @@
 
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/app/components/ui/button";
@@ -27,7 +27,11 @@ import { PhotoInput } from "../PhotoInput/PhotoInput";
 import { AreaSelect } from "../AreaSelect/AreaSelect";
 import { EstimateDialog } from "../QueueEntryForm/EstimateDialog";
 import { compressImage } from "@/app/actions/api/client/compressImage";
-import { TRUCK_TYPES, CARGO_TYPE_OPTIONS } from "@/app/interface/truck/truck";
+import {
+  TRUCK_TYPES,
+  CARGO_TYPE_OPTIONS,
+  ITruck,
+} from "@/app/interface/truck/truck";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,6 +42,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/app/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { clientApiFetch } from "@/app/actions/api/client/clientApiFetch";
 
 const JOB_OPTIONS = [
   { value: "Carga", label: "Carga" },
@@ -55,6 +66,18 @@ export function QueueEntryWalkUpForm() {
     message: string | null;
     entryId: number | null;
   }>({ open: false, message: null, entryId: null });
+
+  const [truckList, setTruckList] = useState<ITruck[]>([]);
+
+  useEffect(() => {
+    const fetchTruckList = async () => {
+      const response = await clientApiFetch("/trucks?page_size=9999");
+      const data = await response.json();
+      setTruckList(data?.results || []);
+    };
+
+    fetchTruckList();
+  }, []);
 
   const form = useForm<
     QueueEntryWalkUpFormInput,
@@ -128,6 +151,12 @@ export function QueueEntryWalkUpForm() {
     setEstimateDialog({ open: false, message: null, entryId: null });
   }
 
+  function handleDriverSelect(truck: ITruck) {
+    form.setValue("truck_driver", truck.driver);
+    form.setValue("truck_cpf", truck.cpf);
+    form.setValue("truck_cellphone", truck.cellphone);
+  }
+
   async function onSubmit(values: QueueEntryWalkUpFormOutput) {
     const isDuplicate = await checkDuplicatePlate(values.truck_plate);
     if (isDuplicate) {
@@ -147,6 +176,24 @@ export function QueueEntryWalkUpForm() {
         <h1 className="text-3xl font-bold tracking-tight">
           Registrar caminhão
         </h1>
+        <Field label="Preenchimento rápido">
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              className="w-full"
+              render={<Button variant="outline">Selecione...</Button>}
+            />
+            <DropdownMenuContent className="max-h-[60vh] overflow-y-auto sm:max-h-80">
+              {truckList.map((truck) => (
+                <DropdownMenuItem
+                  key={truck.id}
+                  onClick={() => handleDriverSelect(truck)}
+                >
+                  {truck.driver}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </Field>
 
         <Field
           label="Empresa"

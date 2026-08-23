@@ -28,7 +28,6 @@ export async function createUser(data: UserInput) {
 }
 
 export async function updateUser(id: number, data: UserInput) {
-  console.log(JSON.stringify(data));
   const res = await serverApiFetch(`/users/${id}/`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },

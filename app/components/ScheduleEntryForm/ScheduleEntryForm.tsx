@@ -1,9 +1,8 @@
-// app/components/ScheduleEntryForm/ScheduleEntryForm.tsx
 "use client";
 
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
@@ -43,8 +42,19 @@ import {
   ScheduleEntryFormOutput,
 } from "./schema";
 import { IQueueEntry } from "@/app/interface/queue_entry/queue_entry";
-import { TRUCK_TYPES, CARGO_TYPE_OPTIONS } from "@/app/interface/truck/truck";
+import {
+  TRUCK_TYPES,
+  CARGO_TYPE_OPTIONS,
+  ITruck,
+} from "@/app/interface/truck/truck";
 import { IUser } from "@/app/interface/user/user";
+import { clientApiFetch } from "@/app/actions/api/client/clientApiFetch";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 export function ScheduleEntryForm({
   entry,
@@ -60,6 +70,18 @@ export function ScheduleEntryForm({
     currentUser.role === "ADMIN" ||
     currentUser.role === "OPERATOR";
   const [isPending, setIsPending] = useState(false);
+
+  const [truckList, setTruckList] = useState<ITruck[]>([]);
+
+  useEffect(() => {
+    const fetchTruckList = async () => {
+      const response = await clientApiFetch("/trucks?page_size=9999");
+      const data = await response.json();
+      setTruckList(data?.results || []);
+    };
+
+    fetchTruckList();
+  }, []);
 
   const form = useForm<
     ScheduleEntryFormInput,
@@ -149,6 +171,12 @@ export function ScheduleEntryForm({
     }
   }
 
+  function handleDriverSelect(truck: ITruck) {
+    form.setValue("truck_driver", truck.driver);
+    form.setValue("truck_cpf", truck.cpf);
+    form.setValue("truck_cellphone", truck.cellphone);
+  }
+
   const cargoTypeValue = form.watch("truck_cargo_type");
   const areaValue = form.watch("area");
 
@@ -160,6 +188,28 @@ export function ScheduleEntryForm({
       <h2 className="text-lg font-semibold">
         {entry ? "Editar agendamento" : "Novo agendamento"}
       </h2>
+
+      {!entry && (
+        <div className="space-y-1.5">
+          <Label className="text-base">Preenchimento rápido</Label>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              className="w-full"
+              render={<Button variant="outline">Selecione...</Button>}
+            />
+            <DropdownMenuContent className="max-h-[60vh] overflow-y-auto sm:max-h-80">
+              {truckList.map((truck) => (
+                <DropdownMenuItem
+                  key={truck.id}
+                  onClick={() => handleDriverSelect(truck)}
+                >
+                  {truck.driver}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      )}
 
       <div className="space-y-2">
         <Label>Empresa</Label>
