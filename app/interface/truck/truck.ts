@@ -24,6 +24,9 @@ export const TRUCK_TYPES: string[] = [
   "Gaiola",
   "Rodo caçamba",
   "Caminhonete",
+  "Carreta LS",
+  "Carreta Vanderleia",
+  "Carreta Quarto Eixo",
 ];
 
 export interface ITruck {
