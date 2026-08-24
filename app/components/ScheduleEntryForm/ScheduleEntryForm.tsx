@@ -400,7 +400,11 @@ export function ScheduleEntryForm({
           name="document_photo"
           control={form.control}
           render={({ field: { value, onChange } }) => (
-            <PhotoInput value={value} onChangeAction={onChange} />
+            <PhotoInput
+              value={value}
+              onChangeAction={onChange}
+              document="Anexar Documento"
+            />
           )}
         />
         {form.formState.errors.document_photo && (

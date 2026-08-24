@@ -49,6 +49,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { clientApiFetch } from "@/app/actions/api/client/clientApiFetch";
+import { useSubmitLock } from "@/hooks/useSubmitLock";
 
 const JOB_OPTIONS = [
   { value: "Carga", label: "Carga" },
@@ -68,6 +69,8 @@ export function QueueEntryWalkUpForm() {
   }>({ open: false, message: null, entryId: null });
 
   const [truckList, setTruckList] = useState<ITruck[]>([]);
+
+  const guard = useSubmitLock();
 
   useEffect(() => {
     const fetchTruckList = async () => {
@@ -158,13 +161,15 @@ export function QueueEntryWalkUpForm() {
   }
 
   async function onSubmit(values: QueueEntryWalkUpFormOutput) {
-    const isDuplicate = await checkDuplicatePlate(values.truck_plate);
-    if (isDuplicate) {
-      setPendingValues(values);
-      setDuplicateOpen(true);
-      return;
-    }
-    submitEntry(values);
+    await guard(async () => {
+      const isDuplicate = await checkDuplicatePlate(values.truck_plate);
+      if (isDuplicate) {
+        setPendingValues(values);
+        setDuplicateOpen(true);
+        return;
+      }
+      submitEntry(values);
+    });
   }
 
   return (

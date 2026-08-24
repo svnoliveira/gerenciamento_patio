@@ -7,9 +7,11 @@ import { Button } from "@/app/components/ui/button";
 export function PhotoInput({
   value,
   onChangeAction,
+  document,
 }: {
   value: File | undefined;
   onChangeAction: (file: File | undefined) => void;
+  document?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -66,7 +68,7 @@ export function PhotoInput({
           onClick={() => inputRef.current?.click()}
         >
           <Camera size={28} />
-          Tirar foto
+          {document || "Tirar foto"}
         </Button>
       )}
     </div>
