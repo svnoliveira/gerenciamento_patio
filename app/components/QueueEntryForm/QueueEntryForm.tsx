@@ -123,12 +123,12 @@ export function QueueEntryWalkUpForm() {
           values.truck_plate,
         );
         const compressedDocumentPhoto = await compressImage(
-          values.document_photo,
+          values.document_photo || null,
           values.truck_plate,
         );
         const result = await createWalkUpQueueEntry(
           values,
-          compressedPhoto,
+          compressedPhoto!,
           compressedDocumentPhoto,
         );
         toast("Caminhão registrado e confirmado no pátio!");

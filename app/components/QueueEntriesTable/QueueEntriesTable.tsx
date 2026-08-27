@@ -17,6 +17,9 @@ import { formatDuration } from "@/lib/formatDuration";
 import { STATUS_COLORS } from "@/lib/statusColors";
 import Link from "next/link";
 import { Camera, FileText, Pencil } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "../ui/button";
+import { DisabledEditButton } from "../DisabledEditButton/DisabledEditButton";
 
 export function QueueEntriesTable({
   data,
@@ -144,12 +147,17 @@ export function QueueEntriesTable({
                   {formatDuration(entry.created_at, entry.end_time)}
                 </TableCell>
                 <TableCell>
-                  <Link href={`/dashboard/queue-entries/${entry.id}/edit`}>
-                    <Pencil
-                      size={16}
-                      className="text-muted-foreground hover:text-foreground"
-                    />
-                  </Link>
+                  {entry.status !== "CANCELLED" &&
+                  entry.status !== "FINISHED" ? (
+                    <Link href={`/dashboard/queue-entries/${entry.id}/edit`}>
+                      <Pencil
+                        size={16}
+                        className="text-muted-foreground hover:text-foreground transition-colors"
+                      />
+                    </Link>
+                  ) : (
+                    <DisabledEditButton />
+                  )}
                 </TableCell>
               </TableRow>
             ))

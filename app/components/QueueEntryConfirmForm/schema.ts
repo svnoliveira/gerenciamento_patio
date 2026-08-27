@@ -27,13 +27,13 @@ export function buildQueueEntryCompleteSchema(
         path: ["area"],
       });
     }
-    if (!hasDocumentPhoto && !data.document_photo) {
-      ctx.addIssue({
-        code: "custom",
-        message: "Foto do documento é obrigatória",
-        path: ["document_photo"],
-      });
-    }
+    // if (!hasDocumentPhoto && !data.document_photo) {
+    //   ctx.addIssue({
+    //     code: "custom",
+    //     message: "Foto do documento é obrigatória",
+    //     path: ["document_photo"],
+    //   });
+    // }
   });
 }
 
