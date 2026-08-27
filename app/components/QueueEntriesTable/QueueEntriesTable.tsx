@@ -16,7 +16,7 @@ import { formatDate } from "@/lib/formatDate";
 import { formatDuration } from "@/lib/formatDuration";
 import { STATUS_COLORS } from "@/lib/statusColors";
 import Link from "next/link";
-import { Camera, FileText } from "lucide-react";
+import { Camera, FileText, Pencil } from "lucide-react";
 
 export function QueueEntriesTable({
   data,
@@ -48,13 +48,14 @@ export function QueueEntriesTable({
             <TableHead>Tempo em operação</TableHead>
             <TableHead>Tempo aguardando NF</TableHead>
             <TableHead>Tempo total</TableHead>
+            <TableHead className="w-10"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {!data?.results || data?.results.length === 0 ? (
             <TableRow>
               <TableCell
-                colSpan={18}
+                colSpan={19}
                 className="h-24 text-center text-muted-foreground"
               >
                 Nenhum registro encontrado.
@@ -141,6 +142,14 @@ export function QueueEntriesTable({
                 </TableCell>
                 <TableCell>
                   {formatDuration(entry.created_at, entry.end_time)}
+                </TableCell>
+                <TableCell>
+                  <Link href={`/dashboard/queue-entries/${entry.id}/edit`}>
+                    <Pencil
+                      size={16}
+                      className="text-muted-foreground hover:text-foreground"
+                    />
+                  </Link>
                 </TableCell>
               </TableRow>
             ))
