@@ -40,10 +40,10 @@ export function QueueEntryConfirmCompleteForm({
 }) {
   const router = useRouter();
   const needsArea = !entry.area;
-  const hasSavedDocumentPhoto = Boolean(entry.document_photo);
+  // const hasSavedDocumentPhoto = Boolean(entry.document_photo);
   const schema = useMemo(
-    () => buildQueueEntryCompleteSchema(needsArea, hasSavedDocumentPhoto),
-    [needsArea, hasSavedDocumentPhoto],
+    () => buildQueueEntryCompleteSchema(needsArea),
+    [needsArea],
   );
 
   const [isPending, setIsPending] = useState(false);
@@ -98,8 +98,8 @@ export function QueueEntryConfirmCompleteForm({
         entry.id,
         {
           ...values,
-          photo: compressedPhoto,
-          document_photo: compressedDocumentPhoto,
+          photo: compressedPhoto!,
+          document_photo: compressedDocumentPhoto || undefined,
         },
         needsArea,
       );

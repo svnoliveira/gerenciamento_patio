@@ -7,18 +7,13 @@ export const queueEntryCompleteBaseSchema = z.object({
     .instanceof(File, { message: "Foto é obrigatória" })
     .refine((file) => file.size > 0, "Foto é obrigatória"),
   document_photo: z
-    .instanceof(File, { message: "Foto do documento é obrigatória" })
-    .optional()
-    .refine(
-      (file) => file === undefined || file.size > 0,
-      "Foto do documento é obrigatória",
-    ),
+    .instanceof(File, {
+      message: "Foto do documento deve ser um arquivo válido",
+    })
+    .optional(),
 });
 
-export function buildQueueEntryCompleteSchema(
-  needsArea: boolean,
-  hasDocumentPhoto: boolean,
-) {
+export function buildQueueEntryCompleteSchema(needsArea: boolean) {
   return queueEntryCompleteBaseSchema.superRefine((data, ctx) => {
     if (needsArea && !data.area) {
       ctx.addIssue({

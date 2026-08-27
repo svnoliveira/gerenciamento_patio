@@ -14,7 +14,7 @@ export interface ScheduleEntryInput {
   truck_type: string;
   truck_cargo_type: "Granel" | "Bag" | "Pallet";
   area?: number;
-  document_photo?: File;
+  document_photo?: File | null;
 }
 
 function revalidateSchedule() {
@@ -82,7 +82,7 @@ function buildScheduleFormData(values: ScheduleEntryInput) {
   if (values.area !== undefined) {
     formData.append("area", String(values.area));
   }
-  if (values.document_photo !== undefined) {
+  if (values.document_photo !== undefined && values.document_photo !== null) {
     formData.append(
       "document_photo",
       values.document_photo,
