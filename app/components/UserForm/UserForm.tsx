@@ -43,6 +43,7 @@ const ROLE_OPTIONS = [
   { value: "ADMIN", label: "Administrador" },
   { value: "OPERATOR", label: "Operador" },
   { value: "COMPANY", label: "Empresa" },
+  { value: "VIEWER", label: "Visualizador" },
 ];
 
 export function UserForm({

@@ -68,6 +68,9 @@ export const RegisterForm = () => {
       { label: "Empresa", value: "COMPANY" },
       { label: "Administrador", value: "ADMIN" },
       ...(user?.is_superuser ? [{ label: "Operador", value: "OPERATOR" }] : []),
+      ...(user?.is_superuser
+        ? [{ label: "Visualizador", value: "VIEWER" }]
+        : []),
     ];
   }, [user]);
 
