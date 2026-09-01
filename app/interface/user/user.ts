@@ -1,12 +1,13 @@
 import { IPagination } from "../admin/global";
 import { ICompany } from "../company/company";
 
-export type TUserRole = "COMPANY" | "ADMIN" | "OPERATOR";
+export type TUserRole = "COMPANY" | "ADMIN" | "OPERATOR" | "VIEWER";
 
 export const ROLE_LABELS: Record<string, string> = {
   ADMIN: "Administrador",
   OPERATOR: "Operador",
   COMPANY: "Empresa",
+  VIEWER: "Visualizador",
 };
 
 export interface IUser {
