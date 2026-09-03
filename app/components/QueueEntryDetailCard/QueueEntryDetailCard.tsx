@@ -70,10 +70,18 @@ export function QueueEntryDetailCard({
               <Field
                 icon={Building2}
                 label="Empresa"
-                value={entry.company_name}
+                value={entry.company_name?.toUpperCase()}
               />
-              <Field icon={User} label="Motorista" value={entry.truck_driver} />
-              <Field icon={IdCard} label="CPF" value={entry.truck_cpf} />
+              <Field
+                icon={User}
+                label="Motorista"
+                value={entry.truck_driver?.toUpperCase()}
+              />
+              <Field
+                icon={IdCard}
+                label="CPF"
+                value={entry.truck_cpf?.toUpperCase()}
+              />
               <Field
                 icon={Phone}
                 label="Telefone"
@@ -82,22 +90,22 @@ export function QueueEntryDetailCard({
               <Field
                 icon={Package}
                 label="Produto"
-                value={entry.truck_product}
+                value={entry.truck_product?.toUpperCase()}
               />
               <Field
                 icon={TruckIcon}
                 label="Tipo de veículo"
-                value={entry.truck_type}
+                value={entry.truck_type?.toUpperCase()}
               />
               <Field
                 icon={Boxes}
                 label="Tipo de carga"
-                value={entry.truck_cargo_type}
+                value={entry.truck_cargo_type?.toUpperCase()}
               />
               <Field
                 icon={ArrowLeftRight}
                 label="Operação"
-                value={entry.job ? JOB_LABELS[entry.job] : null}
+                value={entry.job ? JOB_LABELS[entry.job]?.toUpperCase() : null}
               />
             </div>
 
