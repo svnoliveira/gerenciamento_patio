@@ -25,13 +25,15 @@ const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
 
 const POLL_INTERVAL_MS = 30000;
 
-export function AreaStatusBadge({ areaId }: { areaId: number }) {
+export function AreaStatusBadge({ areaId }: { areaId: number | null }) {
   const [data, setData] = useState<{
     status: string;
     avg_minutes: number | null;
   } | null>(null);
 
   useEffect(() => {
+    if (areaId === null) return;
+
     let cancelled = false;
 
     async function fetchStatus() {

@@ -161,15 +161,26 @@ export function QueueEntryWalkUpForm() {
   }
 
   async function onSubmit(values: QueueEntryWalkUpFormOutput) {
-    await guard(async () => {
-      const isDuplicate = await checkDuplicatePlate(values.truck_plate);
-      if (isDuplicate) {
-        setPendingValues(values);
-        setDuplicateOpen(true);
+    try {
+      await guard(async () => {
+        const isDuplicate = await checkDuplicatePlate(values.truck_plate);
+        if (isDuplicate) {
+          setPendingValues(values);
+          setDuplicateOpen(true);
+          return;
+        }
+        submitEntry(values);
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      if (message.includes("unexpected response")) {
+        toast(
+          "O aplicativo foi atualizado. Feche e abra novamente antes de continuar.",
+        );
         return;
       }
-      submitEntry(values);
-    });
+      toast(message || "Erro ao registrar");
+    }
   }
 
   return (
