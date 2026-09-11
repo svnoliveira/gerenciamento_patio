@@ -8,7 +8,7 @@ export default function LiveQueueBoardPage() {
         <h1 className="text-2xl font-semibold tracking-tight">
           Fila ao vivo — Operação
         </h1>
-        <QueueStatusBadge />
+        {/* <QueueStatusBadge /> */}
       </div>
       <OperatorQueueBoard />
     </div>
