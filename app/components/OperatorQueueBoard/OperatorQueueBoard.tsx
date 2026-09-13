@@ -40,6 +40,7 @@ import { groupBoardEntries } from "@/lib/groupQueueEntries";
 import { AreaEntryActionDialog } from "./AreaEntryActionDialog";
 import { AreaOperationPanel } from "./AreaOperationPanel";
 import { ChangeAreaDialog } from "./ChangeAreaDialog";
+import { useUserStore } from "@/app/stores/useUserStore";
 
 const QUEUE_STATUSES = "SCHEDULED,ON_YARD,AWAITING_CONCLUSION,IN_OPERATION";
 const POLL_INTERVAL_MS = 5000;
@@ -76,6 +77,8 @@ export function OperatorQueueBoard() {
   const [changeAreaEntry, setChangeAreaEntry] = useState<IQueueEntry | null>(
     null,
   );
+
+  const { user: currentUser } = useUserStore();
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -278,6 +281,7 @@ export function OperatorQueueBoard() {
             <QueueList
               entries={displayedQueueEntries}
               onSelectAction={setQueueDialogEntry}
+              currentUserRole={currentUser?.role}
             />
           </div>
 

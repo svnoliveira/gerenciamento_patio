@@ -8,15 +8,19 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { QueueCard } from "@/app/components/QueueCard/QueueCard";
 import { IQueueEntry } from "@/app/interface/queue_entry/queue_entry";
+import { TUserRole } from "@/app/interface/user/user";
+import { useIsPhoneWidth } from "@/app/hooks/useIsPhoneWidth";
 
 function QueueListCard({
   entry,
   onClickAction,
+  canDrag,
 }: {
   entry: IQueueEntry;
   onClickAction: () => void;
+  canDrag: boolean;
 }) {
-  const isDraggable = entry.status === "ON_YARD";
+  const isDraggable = entry.status === "ON_YARD" && canDrag;
   const {
     attributes,
     listeners,
@@ -50,10 +54,15 @@ function QueueListCard({
 export function QueueList({
   entries,
   onSelectAction,
+  currentUserRole,
 }: {
   entries: IQueueEntry[];
   onSelectAction: (entry: IQueueEntry) => void;
+  currentUserRole?: TUserRole;
 }) {
+  const isPhoneWidth = useIsPhoneWidth();
+  const canDrag = !isPhoneWidth && currentUserRole !== "VIEWER";
+
   return (
     <SortableContext
       items={entries.map((e) => String(e.id))}
@@ -70,6 +79,7 @@ export function QueueList({
               key={entry.id}
               entry={entry}
               onClickAction={() => onSelectAction(entry)}
+              canDrag={canDrag}
             />
           ))
         )}
