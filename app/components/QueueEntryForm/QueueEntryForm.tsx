@@ -101,6 +101,7 @@ export function QueueEntryWalkUpForm() {
       area: undefined,
       photo: undefined,
       document_photo: undefined,
+      document_file: undefined,
     },
   });
 
@@ -130,6 +131,7 @@ export function QueueEntryWalkUpForm() {
           values,
           compressedPhoto!,
           compressedDocumentPhoto,
+          values.document_file || null,
         );
         toast("Caminhão registrado e confirmado no pátio!");
         form.reset();
@@ -396,6 +398,23 @@ export function QueueEntryWalkUpForm() {
             control={form.control}
             render={({ field: { value, onChange } }) => (
               <PhotoInput value={value} onChangeAction={onChange} />
+            )}
+          />
+        </Field>
+
+        <Field
+          label="Arquivo do documento"
+          error={form.formState.errors.document_file?.message}
+        >
+          <Controller
+            name="document_file"
+            control={form.control}
+            render={({ field: { onChange } }) => (
+              <Input
+                type="file"
+                accept=".pdf,.doc,.docx,.txt"
+                onChange={(e) => onChange(e.target.files?.[0])}
+              />
             )}
           />
         </Field>

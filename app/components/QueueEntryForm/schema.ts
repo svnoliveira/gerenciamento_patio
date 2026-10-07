@@ -31,6 +31,11 @@ export const queueEntryWalkUpSchema = z.object({
       message: "Foto do documento deve ser um arquivo válido",
     })
     .optional(),
+  document_file: z
+    .instanceof(File, {
+      message: "Arquivo do documento deve ser um arquivo válido",
+    })
+    .optional(),
 });
 
 export type QueueEntryWalkUpFormInput = z.input<typeof queueEntryWalkUpSchema>;

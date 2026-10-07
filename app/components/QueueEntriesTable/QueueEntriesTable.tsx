@@ -16,7 +16,7 @@ import { formatDate } from "@/lib/formatDate";
 import { formatDuration } from "@/lib/formatDuration";
 import { STATUS_COLORS } from "@/lib/statusColors";
 import Link from "next/link";
-import { Camera, FileText, Pencil } from "lucide-react";
+import { Camera, Download, FileText, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { DisabledEditButton } from "../DisabledEditButton/DisabledEditButton";
@@ -41,6 +41,7 @@ export function QueueEntriesTable({
             <TableHead>Operação</TableHead>
             <TableHead>Foto</TableHead>
             <TableHead>Documento</TableHead>
+            <TableHead>Arquivo</TableHead>
             <TableHead>Criado em</TableHead>
             <TableHead>Chegada</TableHead>
             <TableHead>Início operação</TableHead>
@@ -114,6 +115,23 @@ export function QueueEntriesTable({
                     >
                       <FileText className="h-4 w-4 text-primary" />
                     </Link>
+                  ) : (
+                    "—"
+                  )}
+                </TableCell>
+                <TableCell>
+                  {entry.document_file ? (
+                    <a
+                      href={entry.document_file}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download
+                    >
+                      <Download
+                        size={16}
+                        className="text-muted-foreground hover:text-foreground"
+                      />
+                    </a>
                   ) : (
                     "—"
                   )}

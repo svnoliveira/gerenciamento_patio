@@ -9,6 +9,7 @@ export async function createWalkUpQueueEntry(
   values: QueueEntryWalkUpFormOutput,
   photo: File,
   document_photo: File | null,
+  document_file: File | null,
 ) {
   const formData = new FormData();
 
@@ -25,6 +26,9 @@ export async function createWalkUpQueueEntry(
   formData.append("photo", photo, photo.name);
   if (document_photo) {
     formData.append("document_photo", document_photo, document_photo.name);
+  }
+  if (document_file) {
+    formData.append("document_file", document_file, document_file.name);
   }
 
   const res = await serverApiFetch("/queue-entries/", {

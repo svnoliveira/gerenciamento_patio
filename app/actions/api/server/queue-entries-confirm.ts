@@ -12,6 +12,7 @@ export async function completeScheduledEntry(
     job: values.job,
     photo: values.photo,
     document_photo: values.document_photo,
+    document_file: values.document_file,
     ...(needsArea ? { area: values.area } : {}),
   });
 

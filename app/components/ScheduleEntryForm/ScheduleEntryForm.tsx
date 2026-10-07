@@ -102,6 +102,7 @@ export function ScheduleEntryForm({
       truck_cargo_type: entry?.truck_cargo_type ?? ("" as never),
       area: entry?.area?.id,
       document_photo: undefined,
+      document_file: undefined,
     },
   });
 
@@ -412,6 +413,21 @@ export function ScheduleEntryForm({
             {form.formState.errors.document_photo.message}
           </p>
         )}
+      </div>
+
+      <div className="space-y-1.5">
+        <Label>Arquivo do documento (opcional)</Label>
+        <Controller
+          name="document_file"
+          control={form.control}
+          render={({ field: { onChange } }) => (
+            <Input
+              type="file"
+              accept=".pdf,.doc,.docx,.txt"
+              onChange={(e) => onChange(e.target.files?.[0])}
+            />
+          )}
+        />
       </div>
 
       <div className="flex items-center justify-between pt-2">

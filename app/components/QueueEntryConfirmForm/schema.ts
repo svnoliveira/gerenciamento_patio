@@ -11,6 +11,11 @@ export const queueEntryCompleteBaseSchema = z.object({
       message: "Foto do documento deve ser um arquivo válido",
     })
     .optional(),
+  document_file: z
+    .instanceof(File, {
+      message: "Arquivo do documento deve ser um arquivo válido",
+    })
+    .optional(),
 });
 
 export function buildQueueEntryCompleteSchema(needsArea: boolean) {

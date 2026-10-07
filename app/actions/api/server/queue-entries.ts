@@ -41,7 +41,13 @@ function revalidateQueue() {
 
 export async function confirmQueueEntryDetails(
   id: number,
-  data: { area?: number; job?: string; photo?: File; document_photo?: File },
+  data: {
+    area?: number;
+    job?: string;
+    photo?: File;
+    document_photo?: File;
+    document_file?: File;
+  },
 ) {
   const formData = new FormData();
   if (data.area !== undefined) formData.append("area", String(data.area));
@@ -53,6 +59,12 @@ export async function confirmQueueEntryDetails(
       "document_photo",
       data.document_photo,
       data.document_photo.name,
+    );
+  if (data.document_file !== undefined)
+    formData.append(
+      "document_file",
+      data.document_file,
+      data.document_file.name,
     );
 
   const result = await callAction(
@@ -106,7 +118,13 @@ export async function cancel(id: number) {
 export async function setStatus(
   id: number,
   status: string,
-  extra?: { area?: number; job?: string; photo?: File; document_photo?: File },
+  extra?: {
+    area?: number;
+    job?: string;
+    photo?: File;
+    document_photo?: File;
+    document_file?: File;
+  },
 ) {
   const formData = new FormData();
   formData.append("status", status);
@@ -119,6 +137,12 @@ export async function setStatus(
       "document_photo",
       extra.document_photo,
       extra.document_photo.name,
+    );
+  if (extra?.document_file !== undefined)
+    formData.append(
+      "document_file",
+      extra.document_file,
+      extra.document_file.name,
     );
 
   const result = await callAction(

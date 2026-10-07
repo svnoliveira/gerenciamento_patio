@@ -8,6 +8,7 @@ import {
   Truck as TruckIcon,
   Boxes,
   ArrowLeftRight,
+  Download,
 } from "lucide-react";
 import { Badge } from "@/app/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/app/components/ui/card";
@@ -183,6 +184,28 @@ export function QueueEntryDetailCard({
               className="object-cover"
               sizes="(max-width: 500px) 100vw, 448px"
             />
+          </div>
+        )}
+
+        {isFull && entry.document_file && (
+          <div className="rounded-xl border bg-muted/30 p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  Arquivo do documento
+                </p>
+                <p className="text-base font-medium">Arquivo anexado</p>
+              </div>
+              <a
+                href={entry.document_file}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
+              >
+                <Download size={16} />
+                Abrir
+              </a>
+            </div>
           </div>
         )}
       </CardContent>

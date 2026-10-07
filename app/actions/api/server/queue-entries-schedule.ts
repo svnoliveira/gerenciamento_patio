@@ -15,6 +15,7 @@ export interface ScheduleEntryInput {
   truck_cargo_type: "Granel" | "Bag" | "Pallet";
   area?: number;
   document_photo?: File | null;
+  document_file?: File | null;
 }
 
 function revalidateSchedule() {
@@ -24,13 +25,16 @@ function revalidateSchedule() {
 
 export async function createScheduleEntry(values: ScheduleEntryInput) {
   const hasDocumentPhoto = values.document_photo !== undefined;
-  const body = hasDocumentPhoto
+  const hasDocumentFile = values.document_file !== undefined;
+  const useFormData = hasDocumentPhoto || hasDocumentFile;
+
+  const body = useFormData
     ? buildScheduleFormData(values)
     : JSON.stringify(values);
 
   const res = await serverApiFetch("/queue-entries/", {
     method: "POST",
-    ...(hasDocumentPhoto
+    ...(useFormData
       ? { body }
       : { headers: { "Content-Type": "application/json" }, body }),
   });
@@ -49,13 +53,15 @@ export async function updateScheduleEntry(
   values: ScheduleEntryInput,
 ) {
   const hasDocumentPhoto = values.document_photo !== undefined;
-  const body = hasDocumentPhoto
-    ? buildScheduleFormData(values)
-    : JSON.stringify(values);
+  const hasDocumentFile = values.document_file !== undefined;
+  const body =
+    hasDocumentPhoto || hasDocumentFile
+      ? buildScheduleFormData(values)
+      : JSON.stringify(values);
 
   const res = await serverApiFetch(`/queue-entries/${id}/schedule/`, {
     method: "PATCH",
-    ...(hasDocumentPhoto
+    ...(hasDocumentPhoto || hasDocumentFile
       ? { body }
       : { headers: { "Content-Type": "application/json" }, body }),
   });
@@ -87,6 +93,13 @@ function buildScheduleFormData(values: ScheduleEntryInput) {
       "document_photo",
       values.document_photo,
       values.document_photo.name,
+    );
+  }
+  if (values.document_file !== undefined && values.document_file !== null) {
+    formData.append(
+      "document_file",
+      values.document_file,
+      values.document_file.name,
     );
   }
 

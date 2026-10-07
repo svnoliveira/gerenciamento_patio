@@ -25,6 +25,7 @@ import {
   QueueEntryCompleteFormValues,
 } from "./schema";
 import { IQueueEntry } from "@/app/interface/queue_entry/queue_entry";
+import { Input } from "../ui/input";
 
 const JOB_OPTIONS = [
   { value: "Carga", label: "Carga" },
@@ -60,6 +61,7 @@ export function QueueEntryConfirmCompleteForm({
       area: entry.area?.id,
       photo: undefined,
       document_photo: undefined,
+      document_file: undefined,
     },
   });
 
@@ -69,6 +71,7 @@ export function QueueEntryConfirmCompleteForm({
       area: entry.area?.id,
       photo: undefined,
       document_photo: undefined,
+      document_file: undefined,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- resync defaults only when a different entry is picked
   }, [entry.id]);
@@ -78,6 +81,10 @@ export function QueueEntryConfirmCompleteForm({
   const documentPhotoValue = useWatch({
     control: form.control,
     name: "document_photo",
+  });
+  const documentFileValue = useWatch({
+    control: form.control,
+    name: "document_file",
   });
 
   async function onSubmit(values: QueueEntryCompleteFormValues) {
@@ -242,6 +249,36 @@ export function QueueEntryConfirmCompleteForm({
           {form.formState.errors.document_photo && (
             <p className="text-sm text-destructive">
               {form.formState.errors.document_photo.message}
+            </p>
+          )}
+        </div>
+
+        {entry.document_file && !documentFileValue ? (
+          <div className="space-y-2 rounded-xl border p-3">
+            <Label className="text-base">Arquivo do documento salvo</Label>
+            <p className="text-sm text-muted-foreground">
+              Este arquivo já foi enviado no agendamento. Faça upload apenas se
+              quiser substituí-lo.
+            </p>
+          </div>
+        ) : null}
+
+        <div className="space-y-1.5">
+          <Label className="text-base">Arquivo do documento</Label>
+          <Controller
+            name="document_file"
+            control={form.control}
+            render={({ field: { onChange } }) => (
+              <Input
+                type="file"
+                accept=".pdf,.doc,.docx,.txt"
+                onChange={(e) => onChange(e.target.files?.[0])}
+              />
+            )}
+          />
+          {form.formState.errors.document_file && (
+            <p className="text-sm text-destructive">
+              {form.formState.errors.document_file.message}
             </p>
           )}
         </div>
