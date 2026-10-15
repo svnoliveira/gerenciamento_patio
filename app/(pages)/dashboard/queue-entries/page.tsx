@@ -4,6 +4,7 @@ import { QueueEntriesTable } from "@/app/components/QueueEntriesTable/QueueEntri
 import { Pagination } from "@/app/components/Pagination/Pagination";
 import { QueueFilterBar } from "@/app/components/QueueFilters/QueueFilterBar";
 import { IPaginatedQueueEntries } from "@/app/interface/queue_entry/queue_entry";
+import { ExportQueueEntriesButton } from "@/app/components/ExportQueueEntriesButton/ExportQueueEntriesButton";
 
 const PARAM_KEYS = [
   "page",
@@ -39,7 +40,10 @@ export default async function QueueEntriesPage({
       <h1 className="text-2xl font-semibold tracking-tight">
         Históricos de agendamento
       </h1>
-      <QueueFilterBar />
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <QueueFilterBar />
+        <ExportQueueEntriesButton />
+      </div>
       <QueueEntriesTable data={data} />
       <Pagination
         page={Number(page)}

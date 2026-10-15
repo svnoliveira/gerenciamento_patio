@@ -32,6 +32,13 @@ export default function HomePage() {
             nativeButton={false}
             render={<Link href="/queue">VER AGENDAMENTOS AO VIVO</Link>}
           />
+          <Button
+            size="lg"
+            variant="ghost"
+            className="h-16 text-xl font-semibold"
+            nativeButton={false}
+            render={<Link href="/aguardando-nf">Aguardando notas fiscais</Link>}
+          />
         </div>
       </main>
     </>

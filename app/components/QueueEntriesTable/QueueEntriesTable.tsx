@@ -17,8 +17,6 @@ import { formatDuration } from "@/lib/formatDuration";
 import { STATUS_COLORS } from "@/lib/statusColors";
 import Link from "next/link";
 import { Camera, Download, FileText, Pencil } from "lucide-react";
-import { toast } from "sonner";
-import { Button } from "../ui/button";
 import { DisabledEditButton } from "../DisabledEditButton/DisabledEditButton";
 
 export function QueueEntriesTable({

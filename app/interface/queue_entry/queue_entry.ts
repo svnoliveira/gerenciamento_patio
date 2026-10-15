@@ -95,3 +95,10 @@ export interface IOrderingOption {
   value: string;
   label: string;
 }
+
+export interface IAwaitingNFEntry {
+  id: number;
+  truck_plate: string;
+  truck_driver: string;
+  awaiting_conclusion_time: string | null;
+}
