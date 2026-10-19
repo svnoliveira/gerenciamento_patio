@@ -16,7 +16,8 @@ import { formatDate } from "@/lib/formatDate";
 import { formatDuration } from "@/lib/formatDuration";
 import { STATUS_COLORS } from "@/lib/statusColors";
 import Link from "next/link";
-import { Camera, Download, FileText, Pencil } from "lucide-react";
+import { Camera, Download, FileText, Pencil, Receipt } from "lucide-react";
+
 import { DisabledEditButton } from "../DisabledEditButton/DisabledEditButton";
 
 export function QueueEntriesTable({
@@ -40,6 +41,7 @@ export function QueueEntriesTable({
             <TableHead>Foto</TableHead>
             <TableHead>Documento</TableHead>
             <TableHead>Arquivo</TableHead>
+            <TableHead>NF final</TableHead>
             <TableHead>Criado em</TableHead>
             <TableHead>Chegada</TableHead>
             <TableHead>Início operação</TableHead>
@@ -57,7 +59,7 @@ export function QueueEntriesTable({
           {!data?.results || data?.results.length === 0 ? (
             <TableRow>
               <TableCell
-                colSpan={19}
+                colSpan={23}
                 className="h-24 text-center text-muted-foreground"
               >
                 Nenhum registro encontrado.
@@ -121,11 +123,30 @@ export function QueueEntriesTable({
                   {entry.document_file ? (
                     <a
                       href={entry.document_file}
+                      className="flex items-center justify-center"
                       target="_blank"
                       rel="noopener noreferrer"
                       download
                     >
                       <Download
+                        size={16}
+                        className="text-muted-foreground hover:text-foreground"
+                      />
+                    </a>
+                  ) : (
+                    "—"
+                  )}
+                </TableCell>
+                <TableCell>
+                  {entry.final_nf ? (
+                    <a
+                      href={entry.final_nf}
+                      className="flex items-center justify-center"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download
+                    >
+                      <Receipt
                         size={16}
                         className="text-muted-foreground hover:text-foreground"
                       />
@@ -163,12 +184,23 @@ export function QueueEntriesTable({
                   {formatDuration(entry.created_at, entry.end_time)}
                 </TableCell>
                 <TableCell>
-                  {entry.status !== "CANCELLED" &&
-                  entry.status !== "FINISHED" ? (
-                    <Link href={`/dashboard/queue-entries/${entry.id}/edit`}>
+                  {entry.status !== "CANCELLED" ? (
+                    <Link
+                      href={`/dashboard/queue-entries/${entry.id}/edit`}
+                      title={
+                        entry.status === "FINISHED"
+                          ? "Anexar/editar NF final"
+                          : "Editar"
+                      }
+                      aria-label={
+                        entry.status === "FINISHED"
+                          ? "Anexar ou editar NF final"
+                          : "Editar"
+                      }
+                    >
                       <Pencil
                         size={16}
-                        className="text-muted-foreground hover:text-foreground transition-colors"
+                        className="text-muted-foreground transition-colors hover:text-foreground"
                       />
                     </Link>
                   ) : (

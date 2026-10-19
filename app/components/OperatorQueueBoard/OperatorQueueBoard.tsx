@@ -41,6 +41,8 @@ import { AreaEntryActionDialog } from "./AreaEntryActionDialog";
 import { AreaOperationPanel } from "./AreaOperationPanel";
 import { ChangeAreaDialog } from "./ChangeAreaDialog";
 import { useUserStore } from "@/app/stores/useUserStore";
+import { uploadFinalNf } from "@/app/actions/api/server/queue-entries-final-nf";
+import { FinalizeDialog } from "./FinalizeDialog";
 
 const QUEUE_STATUSES = "SCHEDULED,ON_YARD,AWAITING_CONCLUSION,IN_OPERATION";
 const POLL_INTERVAL_MS = 5000;
@@ -49,6 +51,12 @@ interface IBoardState {
   areas: IArea[];
   entries: IQueueEntry[];
   loading: boolean;
+}
+
+type TFinalizeMode = "finish" | "finishDirectly";
+interface IFinalizeTarget {
+  entry: IQueueEntry;
+  mode: TFinalizeMode;
 }
 
 function filterQueueEntries(entries: IQueueEntry[], filter: TQueueListFilter) {
@@ -75,6 +83,10 @@ export function OperatorQueueBoard() {
   const [positionEntry, setPositionEntry] = useState<IQueueEntry | null>(null);
   const [cancelTarget, setCancelTarget] = useState<IQueueEntry | null>(null);
   const [changeAreaEntry, setChangeAreaEntry] = useState<IQueueEntry | null>(
+    null,
+  );
+
+  const [finalizeTarget, setFinalizeTarget] = useState<IFinalizeTarget | null>(
     null,
   );
 
@@ -181,25 +193,44 @@ export function OperatorQueueBoard() {
     setPositionEntry(entry);
   }
 
-  async function handleFinish(entry: IQueueEntry) {
+  function handleRequestFinalize(entry: IQueueEntry) {
     setQueueDialogEntry(null);
-    try {
-      await finish(entry.id);
-      toast("Agendamento finalizado");
-    } catch (err) {
-      toast(err instanceof Error ? err.message : "Erro ao finalizar");
-    }
-    refetch();
+    setFinalizeTarget({ entry, mode: "finish" });
   }
 
-  async function handleFinishDirectly(entry: IQueueEntry) {
+  function handleRequestFinishDirectly(entry: IQueueEntry) {
     setAreaDialogEntry(null);
+    setFinalizeTarget({ entry, mode: "finishDirectly" });
+  }
+
+  async function handleFinalizeConfirm(
+    { entry, mode }: IFinalizeTarget,
+    file: File | null,
+  ) {
     try {
-      await finishDirectlyAction(entry.id);
-      toast("Finalizado com NF entregue");
+      if (mode === "finish") await finish(entry.id);
+      else await finishDirectlyAction(entry.id);
     } catch (err) {
       toast(err instanceof Error ? err.message : "Erro ao finalizar");
+      setFinalizeTarget(null);
+      refetch();
+      return;
     }
+
+    if (!file) {
+      toast("Agendamento finalizado");
+    } else {
+      try {
+        await uploadFinalNf(entry.id, file);
+        toast("Agendamento finalizado e NF anexada");
+      } catch {
+        toast(
+          "Agendamento finalizado, mas o envio da NF falhou. Anexe pelo histórico.",
+        );
+      }
+    }
+
+    setFinalizeTarget(null);
     refetch();
   }
 
@@ -305,7 +336,7 @@ export function OperatorQueueBoard() {
         onConfirmScheduleAction={handleConfirmSchedule}
         onStartOperationAction={handleStartOperation}
         onMovePositionAction={handleMovePosition}
-        onFinishAction={handleFinish}
+        onFinishAction={handleRequestFinalize}
         onDetailsAction={handleDetails}
         onChangeAreaAction={handleRequestChangeArea}
       />
@@ -316,7 +347,7 @@ export function OperatorQueueBoard() {
         onOpenChangeAction={(open) => !open && setAreaDialogEntry(null)}
         onCancelAction={handleRequestCancel}
         onEndOperationAction={handleEndOperation}
-        onFinishDirectlyAction={handleFinishDirectly}
+        onFinishDirectlyAction={handleRequestFinishDirectly}
         onDetailsAction={handleDetails}
       />
 
@@ -352,6 +383,23 @@ export function OperatorQueueBoard() {
         plate={cancelTarget?.truck_plate ?? ""}
         onConfirm={handleConfirmCancel}
       />
+
+      {finalizeTarget && (
+        <FinalizeDialog
+          key={`${finalizeTarget.mode}-${finalizeTarget.entry.id}`}
+          plate={finalizeTarget.entry.truck_plate}
+          description={
+            finalizeTarget.mode === "finishDirectly"
+              ? "A operação será encerrada e o agendamento finalizado de uma vez. Você pode anexar o arquivo da NF agora (opcional)."
+              : undefined
+          }
+          open
+          onOpenChangeAction={(open) => !open && setFinalizeTarget(null)}
+          onConfirmAction={(file) =>
+            handleFinalizeConfirm(finalizeTarget, file)
+          }
+        />
+      )}
     </DndContext>
   );
 }

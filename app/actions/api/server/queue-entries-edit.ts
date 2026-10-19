@@ -17,6 +17,8 @@ export interface EditQueueEntryInput {
   area?: number | null;
   photo?: File | null;
   removePhoto?: boolean;
+  final_nf?: File | null;
+  removeFinalNf?: boolean;
 }
 
 export async function fetchQueueEntryForEdit(id: number) {
@@ -49,6 +51,12 @@ export async function updateQueueEntryFull(
     formData.append("photo", "");
   } else if (values.photo) {
     formData.append("photo", values.photo, values.photo.name);
+  }
+
+  if (values.removeFinalNf) {
+    formData.append("final_nf", "");
+  } else if (values.final_nf) {
+    formData.append("final_nf", values.final_nf, values.final_nf.name);
   }
 
   const res = await serverApiFetch(`/queue-entries/${id}/edit/`, {

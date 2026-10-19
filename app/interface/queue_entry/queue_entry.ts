@@ -46,6 +46,7 @@ export interface IQueueEntry {
   photo: string | null;
   document_photo: string | null;
   document_file: string | null;
+  final_nf: string | null;
   company_name: string | null;
   truck_plate: string;
   truck_product: string;
@@ -100,5 +101,7 @@ export interface IAwaitingNFEntry {
   id: number;
   truck_plate: string;
   truck_driver: string;
+  company_name: string | null;
+  area_name: string | null;
   awaiting_conclusion_time: string | null;
 }

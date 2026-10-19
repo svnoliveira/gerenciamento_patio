@@ -1,4 +1,5 @@
 import { fetchQueueEntryForEdit } from "@/app/actions/api/server/queue-entries-edit";
+import { FinalNfEditForm } from "@/app/components/FinalNfEditForm/FinalNfEditForm";
 import { QueueEntryEditForm } from "@/app/components/QueueEntryEditForm/QueueEntryEditForm";
 
 export default async function EditQueueEntryPage({
@@ -11,7 +12,11 @@ export default async function EditQueueEntryPage({
 
   return (
     <div className="px-4 py-6">
-      <QueueEntryEditForm entry={entry} />
+      {entry.status === "FINISHED" ? (
+        <FinalNfEditForm entry={entry} />
+      ) : (
+        <QueueEntryEditForm entry={entry} />
+      )}
     </div>
   );
 }

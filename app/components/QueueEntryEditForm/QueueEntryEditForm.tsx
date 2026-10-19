@@ -25,6 +25,10 @@ import {
 } from "./schema";
 import { IQueueEntry } from "@/app/interface/queue_entry/queue_entry";
 import { TRUCK_TYPES, CARGO_TYPE_OPTIONS } from "@/app/interface/truck/truck";
+import {
+  DOCUMENT_FILE_ACCEPT,
+  validateDocumentFile,
+} from "@/lib/documentFileRules";
 
 const JOB_OPTIONS = [
   { value: "Carga", label: "Carga" },
@@ -36,6 +40,8 @@ export function QueueEntryEditForm({ entry }: { entry: IQueueEntry }) {
   const [isPending, setIsPending] = useState(false);
   const [photoFile, setPhotoFile] = useState<File | undefined>(undefined);
   const [removePhoto, setRemovePhoto] = useState(false);
+  const [finalNfFile, setFinalNfFile] = useState<File | undefined>(undefined);
+  const [removeFinalNf, setRemoveFinalNf] = useState(false);
 
   const form = useForm<
     QueueEntryEditFormInput,
@@ -69,6 +75,8 @@ export function QueueEntryEditForm({ entry }: { entry: IQueueEntry }) {
         job: values.job ?? null,
         photo: photoFile ?? null,
         removePhoto,
+        final_nf: finalNfFile ?? null,
+        removeFinalNf,
       });
       toast("Registro atualizado com sucesso!");
       router.push("/dashboard/queue-entries");
@@ -297,6 +305,51 @@ export function QueueEntryEditForm({ entry }: { entry: IQueueEntry }) {
           onChangeAction={(file) => {
             setPhotoFile(file);
             if (file) setRemovePhoto(false);
+          }}
+        />
+      </div>
+
+      <div className="space-y-1.5">
+        <Label>NF final (opcional)</Label>
+        {entry.final_nf && !removeFinalNf && !finalNfFile && (
+          <div className="flex items-center justify-between rounded-md border p-2 text-sm">
+            <a
+              href={entry.final_nf}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              Arquivo atual
+            </a>
+            <Button
+              type="button"
+              size="sm"
+              variant="destructive"
+              onClick={() => setRemoveFinalNf(true)}
+            >
+              Remover
+            </Button>
+          </div>
+        )}
+        {removeFinalNf && (
+          <p className="text-sm text-muted-foreground">
+            O arquivo será removido ao salvar.
+          </p>
+        )}
+        <Input
+          type="file"
+          accept={DOCUMENT_FILE_ACCEPT}
+          onChange={(e) => {
+            const picked = e.target.files?.[0];
+            if (!picked) return setFinalNfFile(undefined);
+            const problem = validateDocumentFile(picked);
+            if (problem) {
+              toast(problem);
+              e.target.value = "";
+              return;
+            }
+            setFinalNfFile(picked);
+            setRemoveFinalNf(false);
           }}
         />
       </div>
