@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const plateRegex = /^[A-Z]{3}\d[A-Z]\d{2}$/;
+const plateRegex = /^([A-Z]{3}\d{4}|[A-Z]{3}\d[A-Z]\d{2})$/;
 const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
 const cellphoneRegex = /^\(\d{2}\) \d \d{4}-\d{4}$/;
 
@@ -8,7 +8,7 @@ export const queueEntryEditSchema = z.object({
   company_name: z.string().min(1, "Nome da empresa é obrigatório"),
   truck_plate: z
     .string()
-    .regex(plateRegex, "Placa inválida. Use o formato ABC1D23"),
+    .regex(plateRegex, "Placa inválida. Use o formato ABC1D23 ou ABC1234"),
   truck_driver: z.string().min(1, "Motorista é obrigatório"),
   truck_cpf: z
     .string()
